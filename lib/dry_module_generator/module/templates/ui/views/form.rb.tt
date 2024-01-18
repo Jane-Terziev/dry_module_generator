@@ -1,0 +1,11 @@
+<% module_namespacing do -%>
+<%%= form_tag(url, method: method, id: 'form', novalidate: true, "data-controller": 'form') do %>
+  <% form_attributes.each do |attribute| %><div class="form-floating mb-3">
+    <%%= <%= attribute[:type] %> '<%= class_name.downcase %>[<%= attribute[:field_name] %>]', @form.params.dig(:<%= attribute[:field_name] %>), class: 'form-control', placeholder: '<%= attribute[:field_name].capitalize.humanize %>', required: <%= attribute[:required] %> %>
+    <%%= label_tag '<%= class_name.downcase %>[<%= attribute[:field_name] %>]', '<%= attribute[:label].humanize %>' %>
+  </div>
+  <% end %>
+  <%%= button_tag button_text, class: 'btn btn-primary' %>
+  <%%= link_to "Back", <%= class_name.pluralize.downcase %>_path, class: "btn btn-danger" %>
+<%% end %>
+<% end %>

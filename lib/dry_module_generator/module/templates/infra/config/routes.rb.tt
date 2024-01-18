@@ -1,0 +1,5 @@
+<% module_namespacing do -%>
+Rails.application.routes.draw do
+  resources :<%= class_name.pluralize.downcase %>, controller: "<%= module_name %>/ui/<%= class_name.pluralize.downcase %>"
+end
+<% end %>

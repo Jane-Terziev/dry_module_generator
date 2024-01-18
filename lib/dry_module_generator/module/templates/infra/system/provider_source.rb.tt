@@ -1,0 +1,11 @@
+<% module_namespacing do -%>
+Dry::System.register_provider_source(:<%= module_name %>, group: :<%= module_name %>) do
+  prepare do
+    register("<%= module_name %>.<%= class_name.downcase %>_repository") { <%= module_name.capitalize %>::Domain::<%= class_name %> }
+    register("<%= module_name %>.<%= class_name.downcase %>_service") { <%= module_name.capitalize %>::App::<%= class_name %>Service.new }
+  end
+end
+
+App::Container.register_provider(:<%= module_name %>, from: :<%= module_name %>)
+App::Container.start(:<%= module_name %>)
+<% end %>

@@ -1,0 +1,15 @@
+<% module_namespacing do -%>
+module <%= module_name.capitalize %>
+  module Ui
+    class Update<%= class_name %>Validator < ApplicationContract
+      params do
+        <%= contract_definition.join("\n        ") %>
+      end
+
+      def self.command
+        ::StructGenerator.call(self, { id: { required: true, type: 'string', null: false } })
+      end
+    end
+  end
+end
+<% end %>

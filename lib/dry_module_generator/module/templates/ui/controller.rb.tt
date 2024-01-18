@@ -1,0 +1,53 @@
+<% module_namespacing do -%>
+<%
+  controller_name = "#{class_name.pluralize}Controller"
+  service_name = "#{class_name.singularize.downcase}_service"
+  pluralized_variable_name = class_name.pluralize.downcase
+  singularize_variable_name = class_name.singularize.downcase
+  view_path_name = class_name.pluralize.downcase
+%>module <%= module_name.capitalize %>
+  module Ui
+    class <%= controller_name %> < ApplicationController
+      include Import.inject[<%= service_name %>: "<%= module_name %>.<%= service_name %>"]
+
+      def index
+        @<%= pluralized_variable_name %> = <%= service_name %>.get_all_<%= pluralized_variable_name %>
+      end
+
+      def new
+        @form = Create<%= class_name.singularize %>Validator.new
+      end
+
+      def create
+        <%= service_name %>.create_<%= singularize_variable_name %>(validator.validate(<%= singularize_variable_name %>_params, Create<%= class_name.singularize %>Validator.new))
+        redirect_to <%= view_path_name %>_path, notice: "<%= class_name %> was successfully created!"
+      end
+
+      def show
+        @<%= singularize_variable_name %> = <%= service_name %>.get_<%= singularize_variable_name %>(params[:id])
+      end
+
+      def edit
+        @<%= singularize_variable_name %> = <%= service_name %>.get_<%= singularize_variable_name %>(params[:id])
+        @form = Update<%= class_name.singularize %>Validator.new(params: { <% options[:attributes].each do |field_name, value| %><%= field_name %>: @<%= singularize_variable_name %>.<%= field_name %>, <% end %> })
+      end
+
+      def update
+        <%= service_name %>.update_<%= singularize_variable_name %>(validator.validate(<%= singularize_variable_name %>_params, Update<%= class_name.singularize %>Validator.new, { id: params[:id] }))
+        redirect_to <%= view_path_name %>_path, notice: "<%= class_name %> was successfully updated!"
+      end
+
+      def destroy
+        <%= service_name %>.delete_<%= singularize_variable_name %>(params[:id])
+        redirect_to <%= view_path_name %>_path, notice: "<%= class_name %> was successfully deleted!"
+      end
+
+      private
+
+      def <%= singularize_variable_name %>_params
+        params.require(:<%= singularize_variable_name %>).to_unsafe_h
+      end
+    end
+  end
+end
+<% end %>

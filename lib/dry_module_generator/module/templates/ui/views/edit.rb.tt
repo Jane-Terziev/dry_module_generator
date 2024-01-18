@@ -1,0 +1,6 @@
+<% module_namespacing do -%>
+<div class="row mb-3 mt-3">
+  <span class="fs-5 fw-semibold">Edit <%= class_name %></span>
+</div>
+<%%= render 'form', url: <%= class_name.downcase %>_path(id: params[:id]), method: :patch, button_text: 'Update' %>
+<% end %>

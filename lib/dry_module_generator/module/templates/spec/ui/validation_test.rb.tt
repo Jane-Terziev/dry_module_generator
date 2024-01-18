@@ -1,0 +1,25 @@
+<% module_namespacing do -%>
+require 'rails_helper'
+
+RSpec.describe <%= module_name.capitalize %>::Ui::<%= @action_type %><%= class_name %>Validator, type: :unit do
+  describe '#.call(params)' do
+    let(:params) do
+      { <% contract_test_params.each do |param| %>
+        <%= param[:field_name] %>: <%= param[:value] %>,<% end %>
+      }
+    end
+
+    context 'when all of the required parameters are present' do
+      it 'should return success true' do
+        expect(described_class.new.call(params).success?).to be_truthy
+      end
+    end
+
+    context 'when a required parameter is missing' do <% contract_test_params.filter {|it| it[:required] == true }.each do |param| %>
+      it 'should raise an error when <%= param[:field_name] %> is missing' do
+        expect(described_class.new.call(params.except(:<%= param[:field_name] %>)).success?).to be_falsey
+      end<% end %>
+    end
+  end
+end
+<% end %>

@@ -1,0 +1,16 @@
+<% module_namespacing do -%>
+<div class="row mb-3 mt-3">
+  <span class="fs-5 fw-semibold"><%= class_name %> Details </span>
+</div>
+
+<div id="<%%= @<%= class_name.downcase %>.id %>" class="row">
+  <% options[:attributes].each do |field_name, _| %><div class="col-6">
+    <p class="fw-semibold"><%= field_name.capitalize.humanize %></p>
+  </div>
+  <div class="col-6">
+    <p class="text-secondary"><%%= @<%= class_name.downcase %>.<%= field_name %> || '/'  %></p>
+  </div>
+  <hr style="opacity: 0.10"><% end %>
+</div>
+<%%= link_to "Back to <%= class_name.pluralize.downcase %>", <%= class_name.pluralize.downcase %>_path, class: "btn btn-danger" %>
+<% end %>

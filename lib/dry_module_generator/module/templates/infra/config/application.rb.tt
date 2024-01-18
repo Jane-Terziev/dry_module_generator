@@ -1,0 +1,5 @@
+<% module_namespacing do -%>
+<%= Rails.application.class %>.config.paths.add '<%= module_name %>/lib', load_path: true, autoload: true
+<%= Rails.application.class %>.config.paths['db/migrate'] << '<%= module_path %>/infra/db/migrate'
+<%= Rails.application.class %>.config.paths['app/views'] << '<%= module_name %>/lib'
+<% end %>

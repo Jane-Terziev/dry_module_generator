@@ -1,0 +1,9 @@
+<% module_namespacing do -%>
+module <%= module_name.capitalize %>
+  module Domain
+    class <%= class_name %> < ::AggregateRoot
+      self.table_name = "<%= class_name.pluralize.downcase %>"
+    end
+  end
+end
+<% end %>
