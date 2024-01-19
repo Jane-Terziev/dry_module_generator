@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 module DryModuleGenerator
   class Generator < Rails::Generators::NamedBase
     source_root File.expand_path("templates", __dir__)
-    namespace 'dry_module'
+    namespace "dry_module"
 
     argument :module_name, type: :string, required: false
     class_option :class_name, type: :string, default: nil
@@ -25,7 +27,7 @@ module DryModuleGenerator
       'datetime': "datetime_field_tag",
       'integer': "number_field_tag",
       'float': "text_field_tag",
-      'boolean': "check_box_tag",
+      'boolean': "check_box_tag"
     }.freeze
 
     def initialize(args, *options)
@@ -46,20 +48,25 @@ module DryModuleGenerator
     def create_infra
       template("infra/system/provider_source.rb", File.join("#{module_path}/infra/system/provider_source.rb"))
       @timestamp = Time.now.strftime("%Y%m%d%H%M%S")
-      template("infra/db/migrate/migration.rb", File.join(
-        "#{module_path}/infra/db/migrate/#{@timestamp}_create_#{class_name.downcase.pluralize}.rb")
+      template(
+        "infra/db/migrate/migration.rb",
+        File.join(
+          "#{module_path}/infra/db/migrate/#{@timestamp}_create_#{class_name.downcase.pluralize}.rb"
+        )
       )
-      template('infra/config/application.rb', File.join("#{module_path}/infra/config/application.rb"))
-      template('infra/config/routes.rb', File.join("#{module_path}/infra/config/routes.rb"))
+      template("infra/config/application.rb", File.join("#{module_path}/infra/config/application.rb"))
+      template("infra/config/routes.rb", File.join("#{module_path}/infra/config/routes.rb"))
     end
 
     def create_ui
       @action_type = "Create"
       template("ui/create_validation.rb", File.join("#{module_path}/ui/create_#{class_name.downcase}_validator.rb"))
-      template("spec/ui/validation_test.rb", File.join("#{module_name}/spec/ui/create_#{class_name.downcase}_validator_spec.rb"))
+      template("spec/ui/validation_test.rb",
+               File.join("#{module_name}/spec/ui/create_#{class_name.downcase}_validator_spec.rb"))
       @action_type = "Update"
       template("ui/update_validation.rb", File.join("#{module_path}/ui/update_#{class_name.downcase}_validator.rb"))
-      template("spec/ui/validation_test.rb", File.join("#{module_name}/spec/ui/update_#{class_name.downcase}_validator_spec.rb"))
+      template("spec/ui/validation_test.rb",
+               File.join("#{module_name}/spec/ui/update_#{class_name.downcase}_validator_spec.rb"))
 
       template("ui/controller.rb", File.join("#{module_path}/ui/#{class_name.pluralize.downcase}_controller.rb"))
     end
@@ -85,11 +92,11 @@ module DryModuleGenerator
     def contract_definition
       d = []
       options[:attributes].each do |field_name, value|
-        type, necessity = value.split(':')
-        necessity = 'required' unless necessity
-        nullable = necessity == 'required' ? 'value' : 'maybe'
+        type, necessity = value.split(":")
+        necessity ||= "required"
+        nullable = necessity == "required" ? "value" : "maybe"
         definition = "#{necessity}(:#{field_name}).#{nullable}(:#{type}"
-        necessity == 'required' ? definition = "#{definition}, :filled?)" : definition = "#{definition})"
+        definition = necessity == "required" ? "#{definition}, :filled?)" : "#{definition})"
         d << definition
       end
 
@@ -99,9 +106,9 @@ module DryModuleGenerator
     def dto_definition
       d = []
       options[:attributes].each do |field_name, value|
-        type, necessity = value.split(':')
-        necessity = 'required' unless necessity
-        nullable = necessity == 'required' ? 'attribute' : 'attribute?'
+        type, necessity = value.split(":")
+        necessity ||= "required"
+        nullable = necessity == "required" ? "attribute" : "attribute?"
 
         d << "#{nullable} :#{field_name}, #{TYPE_TO_DRY_TYPE[type.to_sym]}"
       end
@@ -122,8 +129,8 @@ module DryModuleGenerator
         'time': "Time.now"
       }
       options[:attributes].each do |field_name, value|
-        type, necessity = value.split(':')
-        necessity == 'required' ? required = true : required = false
+        type, necessity = value.split(":")
+        required = necessity == "required"
         params << {
           field_name: field_name,
           value: test_data[type.to_sym],
@@ -137,7 +144,7 @@ module DryModuleGenerator
     def migration_definition
       d = []
       options[:attributes].each do |field_name, value|
-        type = value.split(':').first
+        type = value.split(":").first
         d << "t.#{type} :#{field_name}"
       end
       d
@@ -146,9 +153,10 @@ module DryModuleGenerator
     def form_attributes
       d = []
       options[:attributes].each do |field_name, value|
-        type, necessity = value.split(':')
-        necessity == 'required' ? required = true : required = false
-        d << { field_name: field_name, type: TYPE_TO_FORM_FIELD[type.to_sym], label: field_name.capitalize, required: required }
+        type, necessity = value.split(":")
+        required = necessity == "required"
+        d << { field_name: field_name, type: TYPE_TO_FORM_FIELD[type.to_sym], label: field_name.capitalize,
+               required: required }
       end
 
       d

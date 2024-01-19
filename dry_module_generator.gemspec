@@ -10,8 +10,8 @@ Gem::Specification.new do |spec|
 
   spec.summary = "A custom generator for creating features as modules using the dry.rb gems"
   spec.description = "A custom generator for creating features as modules using the dry.rb gems. The module registers a
-dry system provider, adds routes, view and migrations paths to the application configuration and registers the models and services
-for dependency injection."
+dry system provider, adds routes, view and migrations paths to the application configuration and registers the models
+and services for dependency injection."
   spec.homepage = "https://github.com/Jane-Terziev/dry_module_generator"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 2.6.0"
@@ -39,10 +39,10 @@ for dependency injection."
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html
-  spec.add_development_dependency "rails"
-  spec.add_development_dependency "railties"
-  spec.add_development_dependency "dry-validation"
+  spec.add_development_dependency "dry_object_mapper"
   spec.add_development_dependency "dry-struct"
   spec.add_development_dependency "dry_struct_generator"
-  spec.add_development_dependency "dry_object_mapper"
+  spec.add_development_dependency "dry-validation"
+  spec.add_development_dependency "rails"
+  spec.add_development_dependency "railties"
 end

@@ -10,13 +10,13 @@ gem "rspec", "~> 3.0"
 gem "rubocop", "~> 1.21"
 
 # For validating user input
-gem 'dry-validation'
+gem "dry-validation"
 # Data Transfer Objects
-gem 'dry-struct'
+gem "dry-struct"
 # Container and Dependency Injection
-gem 'dry-system', '~> 1'
+gem "dry-system", "~> 1"
 # Convert your Dry::Validation::Contract schemas into Dry::Struct objects and send them in your services
-gem 'dry_struct_generator'
+gem "dry_struct_generator"
 # Mapper for turning our ActiveRecord objects into response DTO objects to avoid triggering queries inside the
 # presentation layer of our application
-gem 'dry_object_mapper'
+gem "dry_object_mapper"
