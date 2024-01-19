@@ -79,5 +79,31 @@ end
         "
       end
     end
+
+    def update_application_controller
+      file_path = "app/controllers/application_controller.rb"
+      file_content = File.read(file_path)
+
+      if !file_content.include?("ConstraintError")
+        inject_into_class file_path, 'ApplicationController' do
+          "  include Import.inject[validator: 'contract_validator']
+
+  rescue_from(ConstraintError) do |e|
+    @form = e.validator
+    if action_name == 'create'
+      render :new, status: :unprocessable_entity
+    elsif action_name == 'update'
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
+"
+          end
+      end
+    end
+
+    def create_javascripts
+      template('javascript/controllers/form_controller.js', File.join("app/javascript/controllers/form_controller.js"))
+    end
   end
 end
