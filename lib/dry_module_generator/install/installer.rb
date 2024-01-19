@@ -6,8 +6,8 @@ module DryModuleGenerator
     namespace "dry_module:setup"
 
     def update_application_record
-      file_path = 'app/models/application_record.rb'
-      class_name = 'ApplicationRecord'
+      file_path = "app/models/application_record.rb"
+      class_name = "ApplicationRecord"
 
       # Read the existing content of the file
       file_content = File.read(file_path)
@@ -44,30 +44,30 @@ module DryModuleGenerator
     end
 
     def create_utils
-      template('utils/contract_validator.rb', File.join("lib/utils/contract_validator.rb"))
-      template('utils/types.rb', File.join("lib/utils/types.rb"))
-      template('utils/application_contract.rb', File.join("lib/utils/application_contract.rb"))
-      template('utils/application_struct.rb', File.join("lib/utils/application_struct.rb"))
-      template('utils/application_read_struct.rb', File.join("lib/utils/application_read_struct.rb"))
+      template("utils/contract_validator.rb", File.join("lib/utils/contract_validator.rb"))
+      template("utils/types.rb", File.join("lib/utils/types.rb"))
+      template("utils/application_contract.rb", File.join("lib/utils/application_contract.rb"))
+      template("utils/application_struct.rb", File.join("lib/utils/application_struct.rb"))
+      template("utils/application_read_struct.rb", File.join("lib/utils/application_read_struct.rb"))
       template(
-        'utils/injection/controller_resolve_strategy.rb',
+        "utils/injection/controller_resolve_strategy.rb",
         File.join("lib/utils/injection/controller_resolve_strategy.rb")
       )
     end
 
     def create_application_service
-      template('services/application_service.rb', File.join("app/services/application_service.rb"))
+      template("services/application_service.rb", File.join("app/services/application_service.rb"))
     end
 
     def create_constraint_error
-      template('errors/constraint_error.rb', File.join("app/errors/constraint_error.rb"))
+      template("errors/constraint_error.rb", File.join("app/errors/constraint_error.rb"))
     end
 
     def create_initializers
-      template('initializers/container.rb', File.join("config/initializers/container.rb"))
-      template('initializers/dependency_injection.rb', File.join("config/initializers/dependency_injection.rb"))
-      template('initializers/dry_struct_generator.rb', File.join("config/initializers/dry_struct_generator.rb"))
-      template('initializers/routes.rb', File.join("config/initializers/routes.rb"))
+      template("initializers/container.rb", File.join("config/initializers/container.rb"))
+      template("initializers/dependency_injection.rb", File.join("config/initializers/dependency_injection.rb"))
+      template("initializers/dry_struct_generator.rb", File.join("config/initializers/dry_struct_generator.rb"))
+      template("initializers/routes.rb", File.join("config/initializers/routes.rb"))
     end
 
     def update_application
@@ -84,9 +84,10 @@ end
       file_path = "app/controllers/application_controller.rb"
       file_content = File.read(file_path)
 
-      if !file_content.include?("ConstraintError")
-        inject_into_class file_path, 'ApplicationController' do
-          "  include Import.inject[validator: 'contract_validator']
+      return if file_content.include?("ConstraintError")
+
+      inject_into_class file_path, "ApplicationController" do
+        "  include Import.inject[validator: 'contract_validator']
 
   rescue_from(ConstraintError) do |e|
     @form = e.validator
@@ -98,7 +99,6 @@ end
   end
 
 "
-          end
       end
     end
 
@@ -106,9 +106,10 @@ end
       file_path = "app/helpers/application_helper.rb"
       file_content = File.read(file_path)
 
-      if !file_content.include?("def show_error")
-        inject_into_module file_path, 'ApplicationHelper' do
-          <<-"EOS"
+      return if file_content.include?("def show_error")
+
+      inject_into_module file_path, "ApplicationHelper" do
+        <<-"CODE"
   def show_error(validator, keys)
     return unless validator.errors
     keys = [keys] unless keys.is_a?(Array)
@@ -133,13 +134,12 @@ end
     end
     result
   end
-          EOS
-        end
+        CODE
       end
     end
 
     def create_javascripts
-      template('javascript/controllers/form_controller.js', File.join("app/javascript/controllers/form_controller.js"))
+      template("javascript/controllers/form_controller.js", File.join("app/javascript/controllers/form_controller.js"))
     end
   end
 end

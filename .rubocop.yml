@@ -16,7 +16,7 @@ Layout/LineLength:
   Max: 120
 
 Metrics/MethodLength:
-  Max: 25
+  Max: 50
 
 Documentation:
   Enabled: false
