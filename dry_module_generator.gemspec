@@ -39,11 +39,5 @@ and services for dependency injection."
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html
-  spec.add_development_dependency "dry_object_mapper"
-  spec.add_development_dependency "dry-struct"
-  spec.add_development_dependency "dry_struct_generator"
-  spec.add_development_dependency "dry-validation"
-  spec.add_development_dependency "dry-system", '~> 1'
-  spec.add_development_dependency "rails"
-  spec.add_development_dependency "railties"
+  spec.add_dependency "rails"
 end
