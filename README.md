@@ -1,34 +1,80 @@
 # DryModuleGenerator
 
-TODO: Delete this and the text below, and describe your gem
-
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/dry_module_generator`. To experiment with that code, run `bin/console` for an interactive prompt.
+A custom generator for creating features as modules using the dry.rb gems. The module registers a dry system provider, 
+adds routes, view and migrations paths to the application configuration and registers the models and services for 
+dependency injection.
 
 ## Installation
 
-TODO: Replace `UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG` with your gem name right after releasing it to RubyGems.org. Please do not do it earlier due to security reasons. Alternatively, replace this section with instructions to install your gem from git if you don't plan to release to RubyGems.org.
+Add this line to your application's Gemfile:
 
-Install the gem and add to the application's Gemfile by executing:
+```ruby
+gem 'dry_module_generator'
+```
 
-    $ bundle add UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+Intall the gem
+    
+    bundle install
 
-If bundler is not being used to manage dependencies, install the gem by executing:
+Then run the setup generator which adds all the utilities and
+configurations to your project:
 
-    $ gem install UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+    rails g dry_module:setup
 
 ## Usage
+Run the following command in the terminal:
 
-TODO: Write usage instructions here
+    rails g dry_module module_name 
+    --attributes attribute1:string:required
+    attribute2:integer:optional
+    attribute3:boolean:optional
+
+Separate your attributes with spaces.
+The attributes are sent in the following format: attribute_name:type:(required/optional).
+
+The supported attribute types are: string, integer, float, boolean, array, date, datetime, time.
+
+This will generate a folder in your root path with the following structure:
+
+    root
+        module_name
+          - lib
+            - module_name
+                - app
+                    - service.rb
+                    - list_dto.rb
+                    - details_dto.rb
+                - domain
+                    - model.rb
+                - infra
+                    - config
+                    - db
+                        - migrations
+                            - migration_file.rb
+                    - system
+                        - provider_source.rb
+                - ui
+                    - views
+                        - _form.html.erb
+                        - index.html.erb
+                        - edit.html.erb
+                        - show.html.erb
+                        - new.html.erb
+                    - create_validation.rb
+                    - update_validation.rb
+                    - controller.rb
+
 
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/dry_module_generator. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/dry_module_generator/blob/main/CODE_OF_CONDUCT.md).
+Bug reports and pull requests are welcome on GitHub at https://github.com/Jane-Terziev/dry_module_generator. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/dry_module_generator/blob/master/CODE_OF_CONDUCT.md).
+
 
 ## License
 
@@ -36,4 +82,4 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 ## Code of Conduct
 
-Everyone interacting in the DryModuleGenerator project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/dry_module_generator/blob/main/CODE_OF_CONDUCT.md).
+Everyone interacting in the DryModuleGenerator project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/dry_module_generator/blob/master/CODE_OF_CONDUCT.md).

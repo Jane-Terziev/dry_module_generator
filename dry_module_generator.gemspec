@@ -43,6 +43,7 @@ and services for dependency injection."
   spec.add_development_dependency "dry-struct"
   spec.add_development_dependency "dry_struct_generator"
   spec.add_development_dependency "dry-validation"
+  spec.add_development_dependency "dry-system", '~> 1'
   spec.add_development_dependency "rails"
   spec.add_development_dependency "railties"
 end

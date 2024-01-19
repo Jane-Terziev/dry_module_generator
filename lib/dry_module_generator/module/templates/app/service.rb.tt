@@ -8,8 +8,6 @@ module <%= module_name.capitalize %>
         result = ActiveRecord::Base.transaction do
           <%= class_name.downcase %>_repository.create!(command.to_h.merge(id: SecureRandom.uuid))
         end
-
-        publish_all(result.domain_events)
       end
 
       def update_<%= class_name.downcase %>(command)
@@ -18,16 +16,12 @@ module <%= module_name.capitalize %>
           <%= class_name.downcase %>.update!(command.to_h)
           <%= class_name.downcase %>
         end
-
-        publish_all(result.domain_events)
       end
 
       def delete_<%= class_name.downcase %>(id)
         result = ActiveRecord::Base.transaction do
           <%= class_name.downcase %>_repository.delete!(<%= class_name.downcase %>_repository.find(id))
         end
-
-        publish_all(result.domain_events)
       end
 
       def get_all_<%= class_name.pluralize.downcase %>
