@@ -48,6 +48,8 @@ This will generate a folder in your root path with the following structure:
                     - model.rb
                 - infra
                     - config
+                        - application.rb
+                        - routes.rb
                     - db
                         - migrations
                             - migration_file.rb
