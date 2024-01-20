@@ -1,0 +1,5 @@
+<nav id="bottom-navigation" class="bottom" data-turbo-permanent>
+  <button class="circle transparent" data-ui="#dialog-navigation-drawer">
+    <i>more_vert</i>
+  </button>
+</nav>

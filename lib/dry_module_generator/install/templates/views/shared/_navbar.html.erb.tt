@@ -1,0 +1,7 @@
+<header>
+  <nav class="right-align">
+    <button class="circle transparent" data-controller="theme" data-action="click->theme#toggle" onclick="this.blur();">
+      <i>dark_mode</i>
+    </button>
+  </nav>
+</header>

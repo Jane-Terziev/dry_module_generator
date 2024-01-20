@@ -134,12 +134,38 @@ end
     end
     result
   end
+
+  def invalid?(validator, keys)
+    if show_error(validator, keys)
+      'invalid'
+    else
+      ''
+    end
+  end
         CODE
       end
     end
 
     def create_javascripts
       template("javascript/controllers/form_controller.js", File.join("app/javascript/controllers/form_controller.js"))
+      template("javascript/controllers/drawer_controller.js", File.join("app/javascript/controllers/drawer_controller.js"))
+      template("javascript/controllers/sidebar_controller.js", File.join("app/javascript/controllers/sidebar_controller.js"))
+      template("javascript/controllers/theme_controller.js", File.join("app/javascript/controllers/theme_controller.js"))
+    end
+
+    def create_shared_views
+      template("views/shared/_bottom_navigation.html.erb", File.join("app/views/shared/_bottom_navigation.html.erb"))
+      template("views/shared/_navbar.html.erb", File.join("app/views/shared/_navbar.html.erb"))
+      template("views/shared/_navigation_drawer.html.erb", File.join("app/views/shared/_navigation_drawer.html.erb"))
+      template("views/shared/_sidebar.html.erb", File.join("app/views/shared/_sidebar.html.erb"))
+    end
+
+    def create_styles
+      template("css/generator.scss", File.join("app/assets/stylesheets/generator.scss"))
+    end
+
+    def create_application_html_template
+      template("views/layout/application.html.erb", File.join("app/views/layouts/template_application.html.erb"))
     end
   end
 end
