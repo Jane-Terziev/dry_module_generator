@@ -7,7 +7,7 @@ module <%= module_name.capitalize %>
       end
 
       def self.command
-        ::StructGenerator.call(self, { id: { required: true, type: 'string', null: false } })
+        ::DryStructGenerator::StructGenerator.new.call(self, { id: { required: true, type: 'string', null: false } })
       end
     end
   end
