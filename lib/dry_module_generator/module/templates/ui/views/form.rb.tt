@@ -1,12 +1,12 @@
 <% module_namespacing do -%>
-<%%= form_tag(url, method: method, id: 'form', novalidate: true, "data-controller": 'form') do %>
-  <% form_attributes.each do |attribute| %><div class="form-floating mb-3">
-    <%%= <%= attribute[:type] %> '<%= class_name.downcase %>[<%= attribute[:field_name] %>]', @form.params.dig(:<%= attribute[:field_name] %>), class: 'form-control', placeholder: '<%= attribute[:field_name].capitalize.humanize %>', required: <%= attribute[:required] %> %>
+<%%= form_tag(url, method: method, id: 'form', "data-controller": 'form') do %>
+  <% form_attributes.each do |attribute| %><div class="field label round border <%%= invalid?(@form, :<%= attribute[:field_name] %>) %>">
+    <%%= <%= attribute[:type] %> '<%= class_name.downcase %>[<%= attribute[:field_name] %>]', @form.params.dig(:<%= attribute[:field_name] %>) %>
     <%%= label_tag '<%= class_name.downcase %>[<%= attribute[:field_name] %>]', '<%= attribute[:label].humanize %>' %>
-    <p class="text-danger errors"><%%= show_error(@form, :<%= attribute[:field_name] %>) %></p>
+    <span class="error"><%%= show_error(@form, :<%= attribute[:field_name] %>) %></span>
   </div>
   <% end %>
-  <%%= button_tag button_text, class: 'btn btn-primary' %>
-  <%%= link_to "Back", <%= class_name.pluralize.downcase %>_path, class: "btn btn-danger" %>
+  <%%= button_tag button_text %>
+  <%%= link_to 'Back', <%= class_name.pluralize.downcase %>_path, class: 'button border' %>
 <%% end %>
 <% end %>
