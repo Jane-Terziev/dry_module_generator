@@ -164,8 +164,17 @@ end
       template("css/generator.scss", File.join("app/assets/stylesheets/generator.scss"))
     end
 
-    def create_application_html_template
-      template("views/layout/application.html.erb", File.join("app/views/layouts/template_application.html.erb"))
+    def create_dry_setup_guide_folder
+      %w[
+        dry_setup_guide/Gemfile
+        dry_setup_guide/config/application.rb
+        dry_setup_guide/config/importmap.rb
+        dry_setup_guide/app/assets/stylesheets/application.scss
+        dry_setup_guide/app/javascript/application.js
+        dry_setup_guide/app/views/layouts/application.html.erb
+      ].each do |template_file|
+        template(template_file, File.join(template_file))
+      end
     end
   end
 end

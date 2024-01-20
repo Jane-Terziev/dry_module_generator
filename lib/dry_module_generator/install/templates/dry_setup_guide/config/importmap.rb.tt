@@ -1,0 +1,2 @@
+# Pin beercss, add this above the controllers pin
+pin 'beercss', to: 'https://cdn.jsdelivr.net/npm/beercss@3.4.13/dist/cdn/beer.min.js'

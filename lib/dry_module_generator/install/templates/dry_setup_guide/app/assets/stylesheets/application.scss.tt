@@ -1,0 +1,2 @@
+# Include the default styling
+@import 'generator';
