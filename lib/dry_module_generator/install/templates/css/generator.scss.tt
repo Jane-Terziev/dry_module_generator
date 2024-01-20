@@ -81,6 +81,10 @@ body.light {
     display: flex;
   }
 
+  #hamburgerMenu {
+    display: inline-flex;
+  }
+
   #sidebar {
     display: none;
   }
@@ -92,6 +96,10 @@ body.light {
 
 @media(min-width: 575.98px) {
   #bottom-navigation {
+    display: none;
+  }
+
+  #hamburgerMenu {
     display: none;
   }
 

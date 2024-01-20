@@ -1,5 +1,11 @@
 <header>
-  <nav class="right-align">
+  <nav>
+    <button id="hamburgerMenu" class="circle transparent" data-ui="#dialog-navigation-drawer">
+      <i>menu</i>
+    </button>
+
+    <div class="max"></div>
+
     <button class="circle transparent" data-controller="theme" data-action="click->theme#toggle" onclick="this.blur();">
       <i>dark_mode</i>
     </button>
