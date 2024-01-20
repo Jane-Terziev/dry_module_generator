@@ -10,10 +10,10 @@ Add this line to your application's Gemfile:
 
 ```ruby
 # for bootstrap views and controllers
-gem 'dry_module_generator', git: 'git://github.com/Jane-Terziev/dry_module_generator.git', branch: 'v0.1.0-bootstrap'
+gem 'dry_module_generator', git: 'https://github.com/Jane-Terziev/dry_module_generator.git', branch: 'v0.1.0-bootstrap'
 
 # for bearcss views and controllers, includes navigation and theming 
-gem 'dry_module_generator', git: 'git://github.com/Jane-Terziev/dry_module_generator.git', branch: 'v0.1.0-bearcss'
+gem 'dry_module_generator', git: 'https://github.com/Jane-Terziev/dry_module_generator.git', branch: 'v0.1.0-bearcss'
 ```
 
 Intall the gem
