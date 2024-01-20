@@ -9,8 +9,7 @@
 
 <table class="stripes large-space">
   <thead>
-    <tr>
-      <% options[:attributes].each do |field_name, _| %>
+    <tr><% options[:attributes].each do |field_name, _| %>
       <th><%= field_name.capitalize.humanize %></th><% end %>
       <th></th>
     </tr>
@@ -18,7 +17,7 @@
   <tbody>
   <%% @<%= class_name.pluralize.downcase %>.each do |<%= class_name.downcase %>| %>
     <tr><% options[:attributes].each do |field_name, _| %>
-      <td> <%%= <%= class_name.downcase %>.<%= field_name %> || '/' %> </td><% end %>
+      <td> <p> <%%= <%= class_name.downcase %>.<%= field_name %> || '/' %> </p> </td><% end %>
       <td class="right-align">
         <button>
           <span>Actions</span>
