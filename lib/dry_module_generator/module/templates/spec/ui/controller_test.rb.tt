@@ -1,0 +1,215 @@
+require 'rails_helper'
+
+RSpec.describe <%= module_name.capitalize %>::Ui::<%= class_name.pluralize %>Controller, type: :controller do
+  let(:<%= class_name.downcase %>_service) { instance_double(<%= module_name.capitalize %>::App::<%= class_name %>Service) }
+  let!(:<%= class_name.pluralize.downcase %>) do
+    [
+      <%= module_name.capitalize %>::Domain::<%= class_name %>.create!(
+        id: SecureRandom.uuid,<% contract_test_params.each do |param| %>
+        <%= param[:field_name] %>: <%= param[:value] %>,<% end %>
+      )
+    ]
+  end
+
+  describe 'GET #index' do
+    subject { get :index }
+    render_views
+
+    it 'renders the index template' do
+      subject
+
+      expect(response.status).to eq(200)
+      expect(response).to render_template :index
+      <%= class_name.pluralize.downcase %>.each do |<%= class_name.downcase %>|<% contract_test_params.each do |param| %>
+         expect(response.body).to include(<%= class_name.downcase %>.<%= param[:field_name] %>.to_s)<% end %>
+      end
+    end
+  end
+
+  describe 'GET #show' do
+    context 'when the <%= class_name.downcase %> is not found' do
+      subject { get :show, params: { id: SecureRandom.uuid } }
+      render_views
+
+      it 'should raise an ActiveRecord::RecordNotFound error' do
+        expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
+    context "when the <%= class_name.downcase %> is found" do
+      subject { get :show, params: { id: <%= class_name.pluralize.downcase %>[0].id } }
+      render_views
+
+      it 'renders the show template' do
+        subject
+
+        expect(response.status).to eq(200)
+        expect(response).to render_template :show
+
+      <%= class_name.pluralize.downcase %>.each do |<%= class_name.downcase %>|<% contract_test_params.each do |param| %>
+         expect(response.body).to include(<%= class_name.pluralize.downcase %>[0].<%= param[:field_name] %>.to_s)<% end %>
+        end
+      end
+    end
+  end
+
+  describe 'GET #new' do
+    subject { get :new }
+    render_views
+
+    it 'renders the new template' do
+      subject
+
+      expect(response.status).to eq(200)
+      expect(response).to render_template :new
+    end
+  end
+
+  describe 'GET #edit' do
+    context 'when the <%= class_name.downcase %> is not found' do
+      subject { get :edit, params: { id: SecureRandom.uuid } }
+      render_views
+
+      it 'should raise an ActiveRecord::RecordNotFound error' do
+        expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
+    context 'when the <%= class_name.downcase %> is found' do
+      subject { get :edit, params: { id: <%= class_name.pluralize.downcase %>[0].id } }
+      render_views
+
+      it 'renders the edit template' do
+        subject
+
+        expect(response.status).to eq(200)
+        expect(response).to render_template :edit
+      end
+    end
+  end
+
+  describe "POST #create" do
+    context 'when the validation is valid' do
+      subject do
+        post :create,
+        params: {
+          <%= class_name.downcase %>: {<% contract_test_params.each do |param| %>
+            <%= param[:field_name] %>: <%= param[:value] %>,<% end %>
+          }
+        }
+      end
+      render_views
+
+      it 'should create a new <%= class_name.downcase %>' do
+        expect(<%= module_name.capitalize %>::Domain::<%= class_name %>.count).to eq(1)
+
+        subject
+
+        expect(response.status).to eq(302)
+        expect(<%= module_name.capitalize %>::Domain::<%= class_name %>.count).to eq(2)
+      end
+    end
+
+    context 'when the validation is not valid' do
+      subject do
+        post :create,
+        params: {
+          <%= class_name.downcase %>: {<% contract_test_params.each do |param| %><% if param[:required] == false %>
+            <%= param[:field_name] %>: <%= param[:value] %>,<% end %><% end %>
+          }
+        }
+      end
+      render_views
+
+      it 'should render the new template with status 422' do
+        subject
+
+        expect(response.status).to eq(422)
+        expect(response).to render_template :new
+      end
+    end
+  end
+
+  describe "PATCH #update" do
+    let(:params) do
+      {
+        id: <%= class_name.pluralize.downcase %>[0].id,
+        <%= class_name.downcase %>: {<% contract_test_params.each do |param| %>
+          <%= param[:field_name] %>: <%= param[:value] %>,<% end %>
+        }
+      }
+    end
+
+    context 'when the validation is not valid' do
+      subject do
+        patch :update,
+        params: {
+          id: <%= class_name.pluralize.downcase %>[0].id,
+          <%= class_name.downcase %>: {<% contract_test_params.each do |param| %><% if param[:required] == false %>
+            <%= param[:field_name] %>: <%= param[:value] %>,<% end %><% end %>
+          }
+        }
+      end
+      render_views
+
+      it 'should render the edit template with status 422' do
+        subject
+
+        expect(response.status).to eq(422)
+        expect(response).to render_template :edit
+      end
+    end
+
+    context "when the <%= class_name.downcase %> is not found" do
+      subject { patch :update, params: params.merge(id: SecureRandom.uuid) }
+      render_views
+
+      it 'should raise an ActiveRecord::RecordNotFound error' do
+        expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
+    context "when the <%= class_name.downcase %> is found" do
+      subject { patch :update, params: params }
+      render_views
+
+      it 'should update the <%= class_name.downcase %>' do
+        subject
+
+        <%= class_name.downcase %> = <%= module_name.capitalize %>::Domain::<%= class_name %>.last
+
+        expect(response.status).to eq(302)<% contract_test_params.each do |param| %>
+        expect(<%= class_name.downcase %>.<%= param[:field_name] %>).to eq(params[:<%= class_name.downcase %>][:<%= param[:field_name] %>])<% end %>
+      end
+    end
+  end
+
+  describe 'DELETE #destroy' do
+    context 'when the <%= class_name.downcase %> is not found' do
+      subject { delete :destroy, params: { id: SecureRandom.uuid } }
+      render_views
+
+      it 'should raise a ActiveRecord::RecordNotFound error' do
+        expect(<%= module_name.capitalize %>::Domain::<%= class_name %>.count).to eq(1)
+
+        expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
+
+        expect(<%= module_name.capitalize %>::Domain::<%= class_name %>.count).to eq(1)
+      end
+    end
+
+    context "when the <%= class_name.downcase %> is found" do
+      subject { delete :destroy, params: { id: <%= class_name.pluralize.downcase %>[0].id } }
+      render_views
+
+      it 'should delete the <%= class_name.downcase %>' do
+        expect(<%= module_name.capitalize %>::Domain::<%= class_name %>.count).to eq(1)
+
+        subject
+
+        expect(<%= module_name.capitalize %>::Domain::<%= class_name %>.count).to eq(0)
+        expect(response.status).to eq(302)
+      end
+    end
+  end
+end
