@@ -272,32 +272,32 @@ pin 'beercss', to: 'https://cdn.jsdelivr.net/npm/beercss@3.4.13/dist/cdn/beer.mi
 
       inject_into_file(file_path) do
         "
-        gem 'sass-rails'"
+gem 'sass-rails'"
       end unless file_content.include?('sass-rails')
 
       inject_into_file(file_path) do
         "
-        gem 'dry-validation'"
+gem 'dry-validation'"
       end unless file_content.include?('dry-validation')
 
       inject_into_file(file_path) do
         "
-        gem 'dry-struct'"
+gem 'dry-struct'"
       end unless file_content.include?('dry-struct')
 
       inject_into_file(file_path) do
         "
-        gem 'dry-system', '~> 1'"
+gem 'dry-system', '~> 1'"
       end unless file_content.include?('dry-system')
 
       inject_into_file(file_path) do
         "
-        gem 'dry_struct_generator'"
+gem 'dry_struct_generator'"
       end unless file_content.include?('dry_struct_generator')
 
       inject_into_file(file_path) do
         "
-        gem 'dry_object_mapper'"
+gem 'dry_object_mapper'"
       end unless file_content.include?('dry_object_mapper')
     end
   end
