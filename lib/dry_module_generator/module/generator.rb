@@ -60,14 +60,9 @@ module DryModuleGenerator
 
     def create_ui
       @action_type = "Create"
-      template("ui/create_validation.rb", File.join("#{module_path}/ui/create_#{class_name.downcase}_validator.rb"))
-      template("spec/ui/validation_test.rb",
-               File.join("#{module_name}/spec/ui/create_#{class_name.downcase}_validator_spec.rb"))
+      template("ui/validation.rb", File.join("#{module_path}/ui/create_#{class_name.downcase}_validator.rb"))
       @action_type = "Update"
-      template("ui/update_validation.rb", File.join("#{module_path}/ui/update_#{class_name.downcase}_validator.rb"))
-      template("spec/ui/validation_test.rb",
-               File.join("#{module_name}/spec/ui/update_#{class_name.downcase}_validator_spec.rb"))
-
+      template("ui/validation.rb", File.join("#{module_path}/ui/update_#{class_name.downcase}_validator.rb"))
       template("ui/controller.rb", File.join("#{module_path}/ui/#{class_name.pluralize.downcase}_controller.rb"))
     end
 
@@ -77,6 +72,14 @@ module DryModuleGenerator
       template("ui/views/show.rb", File.join("#{module_path}/ui/#{class_name.pluralize.downcase}/show.html.erb"))
       template("ui/views/new.rb", File.join("#{module_path}/ui/#{class_name.pluralize.downcase}/new.html.erb"))
       template("ui/views/edit.rb", File.join("#{module_path}/ui/#{class_name.pluralize.downcase}/edit.html.erb"))
+    end
+
+    def create_tests
+      @action_type = "Create"
+      template("spec/ui/validation_test.rb", File.join("#{module_name}/spec/ui/create_#{class_name.downcase}_validator_spec.rb"))
+      @action_type = "Update"
+      template("spec/ui/validation_test.rb", File.join("#{module_name}/spec/ui/update_#{class_name.downcase}_validator_spec.rb"))
+      template("spec/app/service_test.rb", File.join("#{module_name}/spec/app/#{class_name.downcase}_service_spec.rb"))
     end
 
     private
