@@ -171,6 +171,11 @@ end
 
     def update_application_stylesheet
       file_path = "app/assets/stylesheets/application.scss"
+
+      unless File.exist?(file_path)
+        File.rename("app/assets/stylesheets/application.css", file_path)
+      end
+
       file_content = File.read(file_path)
 
       return if file_content.include?("generator")

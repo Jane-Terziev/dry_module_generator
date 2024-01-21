@@ -25,7 +25,7 @@
           <menu>
             <%%= link_to "Show", <%= class_name.downcase %>_path(id: <%= class_name.downcase %>.id) %>
             <%%= link_to "Edit", edit_<%= class_name.downcase %>_path(id: <%= class_name.downcase %>.id) %>
-            <%%= link_to "Destroy", <%= class_name.downcase %>_path(id: <%= class_name.downcase %>.id), data: { "turbo-method": :delete } %>
+            <%%= link_to "Delete", <%= class_name.downcase %>_path(id: <%= class_name.downcase %>.id), data: { "turbo-method": :delete } %>
           </menu>
         </button>
       </td>
