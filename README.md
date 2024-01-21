@@ -9,7 +9,11 @@ dependency injection.
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'dry_module_generator'
+# for bootstrap views and controllers
+gem 'dry_module_generator', git: 'https://github.com/Jane-Terziev/dry_module_generator.git', branch: 'v0.1.0-bootstrap'
+
+# for bearcss views and controllers, includes navigation and theming 
+gem 'dry_module_generator', git: 'https://github.com/Jane-Terziev/dry_module_generator.git', branch: 'v0.1.0-bearcss'
 ```
 
 Intall the gem
