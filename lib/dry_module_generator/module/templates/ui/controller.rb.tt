@@ -19,7 +19,13 @@
       end
 
       def create
-        <%= service_name %>.create_<%= singularize_variable_name %>(validator.validate(<%= singularize_variable_name %>_params, Create<%= class_name.singularize %>Validator.new))
+        <%= service_name %>.create_<%= singularize_variable_name %>(
+          validator.validate(
+            <%= singularize_variable_name %>_params,
+            Create<%= class_name.singularize %>Validator.new,
+            { id: SecureRandom.uuid }
+          )
+        )
         redirect_to <%= view_path_name %>_path, notice: "<%= class_name %> was successfully created!"
       end
 
