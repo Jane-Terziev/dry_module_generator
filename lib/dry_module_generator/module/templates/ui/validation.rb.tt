@@ -1,7 +1,7 @@
 <% module_namespacing do -%>
 module <%= module_name.capitalize %>
   module Ui
-    class Update<%= class_name %>Validator < ApplicationContract
+    class <%= @action_type %><%= class_name %>Validator < ApplicationContract
       params do
         <%= contract_definition.join("\n        ") %>
       end
