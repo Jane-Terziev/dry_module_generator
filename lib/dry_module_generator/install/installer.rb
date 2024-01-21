@@ -78,6 +78,11 @@ Dir[File.join(Rails.root, '*', 'lib', '*', 'infra', 'config', 'application.rb')]
 end
         "
       end
+
+      inject_into_class "config/application.rb", 'Application' do
+        '    config.eager_load_paths << Rails.root.join("lib/utils")
+'
+      end
     end
 
     def update_application_controller
@@ -164,17 +169,136 @@ end
       template("css/generator.scss", File.join("app/assets/stylesheets/generator.scss"))
     end
 
-    def create_dry_setup_guide_folder
-      %w[
-        dry_setup_guide/Gemfile
-        dry_setup_guide/config/application.rb
-        dry_setup_guide/config/importmap.rb
-        dry_setup_guide/app/assets/stylesheets/application.scss
-        dry_setup_guide/app/javascript/application.js
-        dry_setup_guide/app/views/layouts/application.html.erb
-      ].each do |template_file|
-        template(template_file, File.join(template_file))
+    def update_application_stylesheet
+      file_path = "app/assets/stylesheets/application.scss"
+      file_content = File.read(file_path)
+
+      return if file_content.include?("generator")
+      inject_into_file(file_path) do
+        "@import 'generator';"
       end
+    end
+
+    def update_application_javascript
+      file_path = "app/javascript/application.js"
+      file_content = File.read(file_path)
+
+      return if file_content.include?("beercss")
+      inject_into_file(file_path) do
+        "
+import 'beercss';"
+      end
+    end
+
+    def update_body_tag
+      file_path = "app/views/layouts/application.html.erb"
+      file_content = File.read(file_path)
+
+      if file_content.include?("<body>")
+        body_tag_index = file_content.index("<body>")
+        body_end_tag_index = file_content.index("</body>")
+        if body_tag_index
+          file_content[body_tag_index..body_end_tag_index+6] = "
+  <body data-controller='theme'>
+    <%= render 'shared/sidebar', dialog: false, id: 'sidebar' %>
+    <%= render 'shared/navigation_drawer' %>
+    <%= render 'shared/bottom_navigation' %>
+    <main class='responsive max'>
+      <%= render 'shared/navbar' %>
+      <div class='medium-margin'>
+        <%= yield %>
+      </div>
+    </main>
+  </body>"
+          File.write(file_path, file_content)
+        else
+          puts "Error: Unable to body."
+        end
+      else
+        puts "Error: Unable to body."
+      end
+    end
+
+    def update_stylesheet
+      file_path = "app/views/layouts/application.html.erb"
+      file_content = File.read(file_path)
+      # Check if the class is present in the file
+      if file_content.include?("stylesheet_link_tag") && !file_content.include?("beercss")
+        # If the class is present, find the end of the class definition and add the code there
+        style_link_tag_index = file_content.index("stylesheet_link_tag")
+        if style_link_tag_index
+          inject_code_position = style_link_tag_index - 4
+          file_content.insert(inject_code_position, '
+    <link href="https://cdn.jsdelivr.net/npm/beercss@3.4.13/dist/cdn/beer.min.css" rel="stylesheet" data-turbo-track="reload">
+    ')
+          File.write(file_path, file_content)
+        else
+          puts "Error: Unable to find stylesheet link tag"
+        end
+      end
+    end
+
+    def update_meta_tag
+      file_path = "app/views/layouts/application.html.erb"
+      file_content = File.read(file_path)
+      unless file_content.include?("turbo-cache-control")
+        title_tag = file_content.index("</title>")
+        if title_tag
+          inject_code_position = title_tag + 8
+          file_content.insert(inject_code_position, '
+    <meta name="turbo-cache-control" content="no-cache">
+')
+          File.write(file_path, file_content)
+        else
+          puts "Error: Unable to find title for meta tag"
+        end
+      end
+    end
+
+    def update_importmap_pin
+      file_path = "config/importmap.rb"
+      file_content = File.read(file_path)
+
+      return if file_content.include?("beercss")
+      inject_into_file(file_path) do
+        "
+pin 'beercss', to: 'https://cdn.jsdelivr.net/npm/beercss@3.4.13/dist/cdn/beer.min.js'"
+      end
+    end
+
+    def update_gemfile
+      file_path = "Gemfile"
+      file_content = File.read(file_path)
+
+      inject_into_file(file_path) do
+        "
+        gem 'sass-rails'"
+      end unless file_content.include?('sass-rails')
+
+      inject_into_file(file_path) do
+        "
+        gem 'dry-validation'"
+      end unless file_content.include?('dry-validation')
+
+      inject_into_file(file_path) do
+        "
+        gem 'dry-struct'"
+      end unless file_content.include?('dry-struct')
+
+      inject_into_file(file_path) do
+        "
+        gem 'dry-system', '~> 1'"
+      end unless file_content.include?('dry-system')
+
+      inject_into_file(file_path) do
+        "
+        gem 'dry_struct_generator'"
+      end unless file_content.include?('dry_struct_generator')
+
+      inject_into_file(file_path) do
+        "
+        gem 'dry_object_mapper'"
+      end unless file_content.include?('dry_object_mapper')
     end
   end
 end

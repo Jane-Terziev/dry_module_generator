@@ -1,2 +1,0 @@
-# Load the lib utilities so we dont have to require them everywhere
-config.eager_load_paths << Rails.root.join("lib/utils")
