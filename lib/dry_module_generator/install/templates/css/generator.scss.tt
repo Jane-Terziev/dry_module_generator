@@ -124,7 +124,7 @@ p {
   word-break: break-all;
 }
 
-body.light #sidebar {
+body.light #sidebar, body.light #bottom-navigation, body.light #drawer-sidebar {
   background-color: #37517e !important;
   color: white !important;
 }
