@@ -86,6 +86,7 @@ module DryModuleGenerator
         File.join("#{module_name}/spec/ui/update_#{class_name.downcase}_validator_spec.rb")
       )
       template("spec/app/service_test.rb", File.join("#{module_name}/spec/app/#{class_name.downcase}_service_spec.rb"))
+      template("spec/ui/controller_test.rb", File.join("#{module_name}/spec/ui/#{class_name.pluralize.downcase}_controller_spec.rb"))
     end
 
     private
