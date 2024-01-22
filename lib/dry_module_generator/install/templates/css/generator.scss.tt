@@ -153,3 +153,37 @@ nav:is(.left,.right,.top,.bottom) {
 main {
   transition: padding var(--speed3);
 }
+
+
+.success {
+  background-color: green !important;
+  color: white !important;
+}
+
+.table-responsive {
+  display: block !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  white-space: nowrap !important;
+}
+
+.pill {
+  border-radius: 50px;
+  padding: 5px 15px;
+  display: inline-block;
+}
+
+.green-pill {
+  background-color: green;
+  color: white;
+}
+
+.orange-pill {
+  background-color: orange;
+  color: white;
+}
+
+.red-pill {
+  background-color: red;
+  color: white;
+}

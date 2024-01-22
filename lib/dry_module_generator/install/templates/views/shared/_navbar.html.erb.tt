@@ -1,6 +1,6 @@
 <header>
   <nav>
-    <button id="hamburgerMenu" class="circle transparent" data-ui="#dialog-navigation-drawer">
+    <button id="hamburgerMenu" class="circle transparent" data-controller="drawer" data-drawer-element-id-value="dialog-navigation-drawer" data-action="click->drawer#toggle">
       <i>menu</i>
     </button>
 

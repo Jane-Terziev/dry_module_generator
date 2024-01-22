@@ -156,6 +156,9 @@ end
       template("javascript/controllers/drawer_controller.js", File.join("app/javascript/controllers/drawer_controller.js"))
       template("javascript/controllers/sidebar_controller.js", File.join("app/javascript/controllers/sidebar_controller.js"))
       template("javascript/controllers/theme_controller.js", File.join("app/javascript/controllers/theme_controller.js"))
+      template("javascript/controllers/flash_controller.js", File.join("app/javascript/controllers/flash_controller.js"))
+      template("javascript/toast.js", File.join("app/javascript/toast.js"))
+      template("javascript/toastify-js.js", File.join("vendor/javascript/toastify-js.js"))
     end
 
     def create_shared_views
@@ -163,6 +166,7 @@ end
       template("views/shared/_navbar.html.erb", File.join("app/views/shared/_navbar.html.erb"))
       template("views/shared/_navigation_drawer.html.erb", File.join("app/views/shared/_navigation_drawer.html.erb"))
       template("views/shared/_sidebar.html.erb", File.join("app/views/shared/_sidebar.html.erb"))
+      template("views/shared/_flash.html.erb", File.join("app/views/shared/_flash.html.erb"))
     end
 
     def create_styles
@@ -188,10 +192,19 @@ end
       file_path = "app/javascript/application.js"
       file_content = File.read(file_path)
 
-      return if file_content.include?("beercss")
-      inject_into_file(file_path) do
-        "
+      unless file_content.include?("beercss")
+        inject_into_file(file_path) do
+          "
 import 'beercss';"
+        end
+      end
+
+      unless file_content.include?("toast")
+        inject_into_file(file_path) do
+          "
+import { showToastMessage } from './toast';
+window.showToastMessage = showToastMessage;"
+        end
       end
     end
 
@@ -205,6 +218,7 @@ import 'beercss';"
         if body_tag_index
           file_content[body_tag_index..body_end_tag_index+6] = "
   <body data-controller='theme'>
+    <%= render partial: 'shared/flash' %>
     <%= render 'shared/sidebar', dialog: false, id: 'sidebar' %>
     <%= render 'shared/navigation_drawer' %>
     <%= render 'shared/bottom_navigation' %>
@@ -228,17 +242,28 @@ import 'beercss';"
       file_path = "app/views/layouts/application.html.erb"
       file_content = File.read(file_path)
       # Check if the class is present in the file
-      if file_content.include?("stylesheet_link_tag") && !file_content.include?("beercss")
-        # If the class is present, find the end of the class definition and add the code there
-        style_link_tag_index = file_content.index("stylesheet_link_tag")
-        if style_link_tag_index
-          inject_code_position = style_link_tag_index - 4
-          file_content.insert(inject_code_position, '
+      style_link_tag_index = file_content.index("stylesheet_link_tag")
+
+      unless style_link_tag_index
+        puts "Cannot find stylesheet link tag"
+        return
+      end
+
+      inject_code_position = style_link_tag_index - 4
+
+      unless file_content.include?("beercss")
+        file_content.insert(inject_code_position, '
     <link href="https://cdn.jsdelivr.net/npm/beercss@3.4.13/dist/cdn/beer.min.css" rel="stylesheet" data-turbo-track="reload">
     ')
+        File.write(file_path, file_content)
+      end
+
+      unless file_content.include?("toastify")
+        if style_link_tag_index
+          file_content.insert(inject_code_position, '
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+          ')
           File.write(file_path, file_content)
-        else
-          puts "Error: Unable to find stylesheet link tag"
         end
       end
     end
@@ -264,10 +289,18 @@ import 'beercss';"
       file_path = "config/importmap.rb"
       file_content = File.read(file_path)
 
-      return if file_content.include?("beercss")
-      inject_into_file(file_path) do
-        "
+      unless file_content.include?("beercss")
+        inject_into_file(file_path) do
+          "
 pin 'beercss', to: 'https://cdn.jsdelivr.net/npm/beercss@3.4.13/dist/cdn/beer.min.js'"
+        end
+      end
+
+      unless file_content.include?("toastify")
+        inject_into_file(file_path) do
+          "
+pin 'toastify-js' # @1.12.0"
+        end
       end
     end
 
