@@ -1,5 +1,5 @@
 <%% link = pagy_link_proc(@paginated_result.pagination) %>
-<nav class="wrap small-padding">
+<nav class="wrap small-padding right-align">
   <%% if @paginated_result.pagination.prev %>
     <%%== link.call(@paginated_result.pagination.prev, "Previous", 'aria-label="previous" class="button"') %>
   <%% else %>

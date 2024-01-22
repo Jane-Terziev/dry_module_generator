@@ -3,6 +3,12 @@ module <%= module_name.capitalize %>
   module Domain
     class <%= class_name %> < ApplicationRecord
       self.table_name = "<%= class_name.pluralize.downcase %>"
+
+      def self.ransackable_attributes(auth_object = nil)
+        %w[<% options[:attributes].each do |field_name, _ | %>
+         <%= field_name %> <% end %>
+        ]
+      end
     end
   end
 end

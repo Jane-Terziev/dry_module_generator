@@ -46,12 +46,12 @@
 
       def update
         <%= service_name %>.update_<%= singularize_variable_name %>(validator.validate(<%= singularize_variable_name %>_params, Update<%= class_name.singularize %>Validator.new, { id: params[:id] }))
-        redirect_to <%= view_path_name %>_path(page: params[:page]), notice: "<%= class_name %> was successfully updated!"
+        redirect_to <%= view_path_name %>_path(page: params[:page], q: params[:q].as_json), notice: "<%= class_name %> was successfully updated!"
       end
 
       def destroy
         <%= service_name %>.delete_<%= singularize_variable_name %>(params[:id])
-        redirect_to <%= view_path_name %>_path(page: params[:page]), notice: "<%= class_name %> was successfully deleted!"
+        redirect_to <%= view_path_name %>_path(page: params[:page], q: params[:q].as_json), notice: "<%= class_name %> was successfully deleted!"
       end
 
       private

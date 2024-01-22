@@ -3,5 +3,5 @@
   <h4 class="max">Add <%= class_name %></h4>
 </div>
 
-<%%= render 'form', url: <%= class_name.pluralize.downcase %>_path(page: params[:page]), method: :post, button_text: 'Save' %>
+<%%= render 'form', url: <%= class_name.pluralize.downcase %>_path(page: params[:page], q: params[:q].as_json), method: :post, button_text: 'Save' %>
 <% end %>

@@ -7,6 +7,6 @@
   </div>
   <% end %>
   <%%= button_tag button_text %>
-  <%%= link_to 'Back', <%= class_name.pluralize.downcase %>_path(page: params[:page]), class: 'button border' %>
+  <%%= link_to 'Back', <%= class_name.pluralize.downcase %>_path(page: params[:page], q: params[:q].as_json), class: 'button border' %>
 <%% end %>
 <% end %>

@@ -73,6 +73,7 @@ module DryModuleGenerator
       template("ui/views/show.rb", File.join("#{module_path}/ui/#{class_name.pluralize.downcase}/show.html.erb"))
       template("ui/views/new.rb", File.join("#{module_path}/ui/#{class_name.pluralize.downcase}/new.html.erb"))
       template("ui/views/edit.rb", File.join("#{module_path}/ui/#{class_name.pluralize.downcase}/edit.html.erb"))
+      template("ui/views/table_filter.rb", File.join("#{module_path}/ui/#{class_name.pluralize.downcase}/_table_filter.html.erb"))
     end
 
     def create_tests

@@ -1,0 +1,14 @@
+<%%= search_form_for <%= module_name.capitalize %>::Domain::<%= class_name %>.ransack(params[:q]), url: <%= class_name.pluralize.downcase %>_path, data: { "data-controller": "form" } do |f| %>
+  <div class="grid"><% options[:attributes].each do |field_name, _| %>
+    <div class="s6 m4 l4">
+      <div class="field label round border">
+        <%%= f.search_field :<%= field_name %>_eq, placeholder: ' ' %>
+        <%%= f.label :<%= field_name %>_cont, '<%= field_name.capitalize %>' %>
+      </div>
+    </div><% end %>
+
+    <div class="s6 m2 l2">
+      <%%= button_tag 'Search', class: 'large no-margin responsive' %>
+    </div>
+  </div>
+<%% end %>
