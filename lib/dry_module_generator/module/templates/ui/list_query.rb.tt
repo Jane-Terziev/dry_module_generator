@@ -1,0 +1,11 @@
+<% module_namespacing do -%>
+module <%= module_name.capitalize %>
+  module Ui
+    class ListQuery < ApplicationStruct
+      attribute? :q, Types::Any.default({})
+      attribute? :page, Types::Coercible::Integer.default(1)
+      attribute? :page_size, Types::Coercible::Integer.default(Pagy::DEFAULT[:items])
+    end
+  end
+end
+<% end %>

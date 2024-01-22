@@ -11,7 +11,13 @@
       include Import.inject[<%= service_name %>: "<%= module_name %>.<%= service_name %>"]
 
       def index
-        @<%= pluralized_variable_name %> = <%= service_name %>.get_all_<%= pluralized_variable_name %>
+        @paginated_result = <%= service_name %>.get_all_<%= pluralized_variable_name %>(
+          ListQuery.new(
+            page: params[:page] || 1,
+            page_size: params[:page_size] || 10,
+            q: params[:q] || {}
+          )
+        )
       end
 
       def new

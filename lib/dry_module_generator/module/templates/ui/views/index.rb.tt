@@ -16,7 +16,7 @@
      </tr>
    </thead>
    <tbody>
-   <%% @<%= class_name.pluralize.downcase %>.each do |<%= class_name.downcase %>| %>
+   <%% @paginated_result.data.each do |<%= class_name.downcase %>| %>
      <tr><% options[:attributes].each do |field_name, _| %>
        <td> <p> <%%= <%= class_name.downcase %>.<%= field_name %> || '/' %> </p> </td><% end %>
        <td>
@@ -39,4 +39,8 @@
    </tbody>
  </table>
 </div>
+
+<%% if @paginated_result.pagination.count > 0 %>
+  <%%= render 'shared/pagination' %>
+<%% end %>
 <% end %>

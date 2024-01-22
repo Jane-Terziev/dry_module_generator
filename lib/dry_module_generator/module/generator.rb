@@ -64,6 +64,7 @@ module DryModuleGenerator
       @action_type = "Update"
       template("ui/validation.rb", File.join("#{module_path}/ui/update_#{class_name.downcase}_validator.rb"))
       template("ui/controller.rb", File.join("#{module_path}/ui/#{class_name.pluralize.downcase}_controller.rb"))
+      template("ui/list_query.rb", File.join("#{module_path}/ui/list_query.rb"))
     end
 
     def create_views

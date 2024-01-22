@@ -94,6 +94,12 @@ body.light {
   }
 }
 
+@media(max-width: 640px) {
+  .page-number {
+    display: none;
+  }
+}
+
 @media(min-width: 575.98px) {
   #bottom-navigation {
     display: none;
@@ -110,10 +116,6 @@ body.light {
   main {
     padding: 0.25rem;
   }
-}
-
-:is(th,td)>* {
-  z-index: auto;
 }
 
 :is(th,td) {
@@ -186,4 +188,8 @@ main {
 .red-pill {
   background-color: red;
   color: white;
+}
+
+td:nth-last-child(-n+2) {
+  width: 15% !important;
 }

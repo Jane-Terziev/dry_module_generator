@@ -49,6 +49,7 @@ module DryModuleGenerator
       template("utils/application_contract.rb", File.join("lib/utils/application_contract.rb"))
       template("utils/application_struct.rb", File.join("lib/utils/application_struct.rb"))
       template("utils/application_read_struct.rb", File.join("lib/utils/application_read_struct.rb"))
+      template("utils/pagination_dto.rb", File.join("lib/utils/pagination_dto.rb"))
       template(
         "utils/injection/controller_resolve_strategy.rb",
         File.join("lib/utils/injection/controller_resolve_strategy.rb")
@@ -111,10 +112,9 @@ end
       file_path = "app/helpers/application_helper.rb"
       file_content = File.read(file_path)
 
-      return if file_content.include?("def show_error")
-
-      inject_into_module file_path, "ApplicationHelper" do
-        <<-"CODE"
+      unless file_content.include?("def show_error")
+        inject_into_module file_path, "ApplicationHelper" do
+          <<-"CODE"
   def show_error(validator, keys)
     return unless validator.errors
     keys = [keys] unless keys.is_a?(Array)
@@ -147,7 +147,16 @@ end
       ''
     end
   end
-        CODE
+          CODE
+        end
+      end
+
+      unless file_content.include?("include Pagy::Frontend")
+        inject_into_module file_path, "ApplicationHelper" do
+          "  include Pagy::Frontend
+
+"
+        end
       end
     end
 
@@ -167,6 +176,7 @@ end
       template("views/shared/_navigation_drawer.html.erb", File.join("app/views/shared/_navigation_drawer.html.erb"))
       template("views/shared/_sidebar.html.erb", File.join("app/views/shared/_sidebar.html.erb"))
       template("views/shared/_flash.html.erb", File.join("app/views/shared/_flash.html.erb"))
+      template("views/shared/_pagination.html.erb", File.join("app/views/shared/_pagination.html.erb"))
     end
 
     def create_styles
@@ -337,6 +347,16 @@ gem 'dry_struct_generator'"
         "
 gem 'dry_object_mapper'"
       end unless file_content.include?('dry_object_mapper')
+
+      inject_into_file(file_path) do
+        "
+gem 'pagy'"
+      end unless file_content.include?('pagy')
+
+      inject_into_file(file_path) do
+        "
+gem 'ransack'"
+      end unless file_content.include?('ransack')
     end
   end
 end
