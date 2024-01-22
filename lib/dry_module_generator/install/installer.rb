@@ -228,7 +228,6 @@ window.showToastMessage = showToastMessage;"
         if body_tag_index
           file_content[body_tag_index..body_end_tag_index+6] = "
   <body data-controller='theme'>
-    <%= render partial: 'shared/flash' %>
     <%= render 'shared/sidebar', dialog: false, id: 'sidebar' %>
     <%= render 'shared/navigation_drawer' %>
     <%= render 'shared/bottom_navigation' %>

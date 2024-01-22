@@ -7,40 +7,43 @@
   <%% end %>
 </div>
 
-<div class="table-responsive">
- <table class="stripes large-space" style="text-wrap: nowrap">
-   <thead>
-     <tr><% options[:attributes].each do |field_name, _| %>
-       <th><%= field_name.capitalize.humanize %></th><% end %>
-       <th></th>
-     </tr>
-   </thead>
-   <tbody>
-   <%% @paginated_result.data.each do |<%= class_name.downcase %>| %>
-     <tr><% options[:attributes].each do |field_name, _| %>
-       <td> <p> <%%= <%= class_name.downcase %>.<%= field_name %> || '/' %> </p> </td><% end %>
-       <td>
-         <nav class="no-space">
-           <%%= link_to <%= class_name.downcase %>_path(id: <%= class_name.downcase %>.id), class: 'button border left-round max' do %>
-             <i style="color: var(--primary)">visibility</i>
-           <%% end %>
+<%%= turbo_frame_tag 'clients', "data-turbo-action": 'advance' do %>
+  <%%= render 'shared/flash' %>
+  <div class="table-responsive">
+   <table class="stripes small-space" style="text-wrap: nowrap">
+     <thead>
+       <tr><% options[:attributes].each do |field_name, _| %>
+         <th><%= field_name.capitalize.humanize %></th><% end %>
+         <th></th>
+       </tr>
+     </thead>
+     <tbody>
+     <%% @paginated_result.data.each do |<%= class_name.downcase %>| %>
+       <tr><% options[:attributes].each do |field_name, _| %>
+         <td> <p> <%%= <%= class_name.downcase %>.<%= field_name %> || '/' %> </p> </td><% end %>
+         <td>
+           <nav class="no-space">
+             <%%= link_to <%= class_name.downcase %>_path(id: <%= class_name.downcase %>.id, page: params[:page]), class: 'button border left-round max', "data-turbo-frame": "_top" do %>
+               <i style="color: var(--primary)">visibility</i>
+             <%% end %>
 
-           <%%= link_to edit_<%= class_name.downcase %>_path(id: <%= class_name.downcase %>.id), class: 'button border no-round max' do %>
-             <i style="color: green;">edit</i>
-           <%% end %>
+             <%%= link_to edit_<%= class_name.downcase %>_path(id: <%= class_name.downcase %>.id, page: params[:page]), class: 'button border no-round max', "data-turbo-frame": "_top" do %>
+               <i style="color: green;">edit</i>
+             <%% end %>
 
-           <%%= link_to <%= class_name.downcase %>_path(id: <%= class_name.downcase %>.id), data: { "turbo-method": :delete },  class: 'button border right-round max' do %>
-             <i style="color: red">delete</i>
-           <%% end %>
-         </nav>
-       </td>
-     </tr>
-   <%% end %>
-   </tbody>
- </table>
-</div>
+             <%%= link_to <%= class_name.downcase %>_path(id: <%= class_name.downcase %>.id, page: params[:page]), data: { "turbo-method": :delete },  class: 'button border right-round max' do %>
+               <i style="color: red">delete</i>
+             <%% end %>
+           </nav>
+         </td>
+       </tr>
+     <%% end %>
+     </tbody>
+   </table>
+  </div>
 
-<%% if @paginated_result.pagination.count > 0 %>
-  <%%= render 'shared/pagination' %>
+  <%% if @paginated_result.pagination.count > 0 %>
+    <%%= render 'shared/pagination' %>
+  <%% end %>
 <%% end %>
 <% end %>

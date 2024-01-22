@@ -3,5 +3,5 @@
   <h4 class="max">Edit <%= class_name %></h4>
 </div>
 
-<%%= render 'form', url: <%= class_name.downcase %>_path(id: params[:id]), method: :patch, button_text: 'Update' %>
+<%%= render 'form', url: <%= class_name.downcase %>_path(id: params[:id], page: params[:page]), method: :patch, button_text: 'Update' %>
 <% end %>

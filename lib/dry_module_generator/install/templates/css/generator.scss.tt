@@ -160,6 +160,7 @@ main {
 .success {
   background-color: green !important;
   color: white !important;
+  font-weight: bolder;
 }
 
 .table-responsive {
