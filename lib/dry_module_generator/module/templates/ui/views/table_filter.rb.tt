@@ -3,7 +3,7 @@
     <div class="s6 m4 l4">
       <div class="field label round border">
         <%%= f.search_field :<%= field_name %>_eq, placeholder: ' ' %>
-        <%%= f.label :<%= field_name %>_cont, '<%= field_name.capitalize %>' %>
+        <%%= f.label :<%= field_name %>_cont, '<%= field_name.capitalize.humanize %>' %>
       </div>
     </div><% end %>
 
