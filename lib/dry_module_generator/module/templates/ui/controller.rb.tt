@@ -33,6 +33,9 @@
           )
         )
         redirect_to <%= view_path_name %>_path, notice: "<%= class_name %> was successfully created!"
+      rescue ConstraintError => e
+        @form = e.validator
+        render :new, status: :unprocessable_entity
       end
 
       def show
@@ -47,6 +50,9 @@
       def update
         <%= service_name %>.update_<%= singularize_variable_name %>(validator.validate(<%= singularize_variable_name %>_params, Update<%= class_name.singularize %>Validator.new, { id: params[:id] }))
         redirect_to <%= view_path_name %>_path(page: params[:page], q: params[:q].as_json), notice: "<%= class_name %> was successfully updated!"
+      rescue ConstraintError => e
+        @form = e.validator
+        render :edit, status: :unprocessable_entity
       end
 
       def destroy

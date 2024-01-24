@@ -72,7 +72,7 @@ module DryModuleGenerator
     end
 
     def update_application
-      inject_into_file "config/application.rb" do
+      append_to_file "config/application.rb" do
         "
 Dir[File.join(Rails.root, '*', 'lib', '*', 'infra', 'config', 'application.rb')].each do |file|
   require File.join(File.dirname(file), File.basename(file, File.extname(file)))
@@ -93,18 +93,7 @@ end
       return if file_content.include?("ConstraintError")
 
       inject_into_class file_path, "ApplicationController" do
-        "  include Import.inject[validator: 'contract_validator']
-
-  rescue_from(ConstraintError) do |e|
-    @form = e.validator
-    if action_name == 'create'
-      render :new, status: :unprocessable_entity
-    elsif action_name == 'update'
-      render :edit, status: :unprocessable_entity
-    end
-  end
-
-"
+        "  include Import.inject[validator: 'contract_validator']"
       end
     end
 
@@ -193,7 +182,7 @@ end
       file_content = File.read(file_path)
 
       return if file_content.include?("generator")
-      inject_into_file(file_path) do
+      append_to_file(file_path) do
         "@import 'generator';"
       end
     end
@@ -203,14 +192,14 @@ end
       file_content = File.read(file_path)
 
       unless file_content.include?("beercss")
-        inject_into_file(file_path) do
+        append_to_file(file_path) do
           "
 import 'beercss';"
         end
       end
 
       unless file_content.include?("toast")
-        inject_into_file(file_path) do
+        append_to_file(file_path) do
           "
 import { showToastMessage } from './toast';
 window.showToastMessage = showToastMessage;"
@@ -299,14 +288,14 @@ window.showToastMessage = showToastMessage;"
       file_content = File.read(file_path)
 
       unless file_content.include?("beercss")
-        inject_into_file(file_path) do
+        append_to_file(file_path) do
           "
 pin 'beercss', to: 'https://cdn.jsdelivr.net/npm/beercss@3.4.13/dist/cdn/beer.min.js'"
         end
       end
 
       unless file_content.include?("toastify")
-        inject_into_file(file_path) do
+        append_to_file(file_path) do
           "
 pin 'toastify-js' # @1.12.0"
         end
@@ -317,42 +306,42 @@ pin 'toastify-js' # @1.12.0"
       file_path = "Gemfile"
       file_content = File.read(file_path)
 
-      inject_into_file(file_path) do
+      append_to_file(file_path) do
         "
 gem 'sass-rails'"
       end unless file_content.include?('sass-rails')
 
-      inject_into_file(file_path) do
+      append_to_file(file_path) do
         "
 gem 'dry-validation'"
       end unless file_content.include?('dry-validation')
 
-      inject_into_file(file_path) do
+      append_to_file(file_path) do
         "
 gem 'dry-struct'"
       end unless file_content.include?('dry-struct')
 
-      inject_into_file(file_path) do
+      append_to_file(file_path) do
         "
 gem 'dry-system', '~> 1'"
       end unless file_content.include?('dry-system')
 
-      inject_into_file(file_path) do
+      append_to_file(file_path) do
         "
 gem 'dry_struct_generator'"
       end unless file_content.include?('dry_struct_generator')
 
-      inject_into_file(file_path) do
+      append_to_file(file_path) do
         "
 gem 'dry_object_mapper'"
       end unless file_content.include?('dry_object_mapper')
 
-      inject_into_file(file_path) do
+      append_to_file(file_path) do
         "
 gem 'pagy'"
       end unless file_content.include?('pagy')
 
-      inject_into_file(file_path) do
+      append_to_file(file_path) do
         "
 gem 'ransack'"
       end unless file_content.include?('ransack')

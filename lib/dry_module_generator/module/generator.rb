@@ -56,6 +56,7 @@ module DryModuleGenerator
       )
       template("infra/config/application.rb", File.join("#{module_path}/infra/config/application.rb"))
       template("infra/config/routes.rb", File.join("#{module_path}/infra/config/routes.rb"))
+      template("infra/config/importmap.rb", File.join("#{module_path}/infra/config/importmap.rb"))
     end
 
     def create_ui
@@ -65,6 +66,7 @@ module DryModuleGenerator
       template("ui/validation.rb", File.join("#{module_path}/ui/update_#{class_name.downcase}_validator.rb"))
       template("ui/controller.rb", File.join("#{module_path}/ui/#{class_name.pluralize.downcase}_controller.rb"))
       template("ui/list_query.rb", File.join("#{module_path}/ui/list_query.rb"))
+      empty_directory("#{module_path}/ui/javascript/controllers")
     end
 
     def create_views
@@ -74,6 +76,16 @@ module DryModuleGenerator
       template("ui/views/new.rb", File.join("#{module_path}/ui/#{class_name.pluralize.downcase}/new.html.erb"))
       template("ui/views/edit.rb", File.join("#{module_path}/ui/#{class_name.pluralize.downcase}/edit.html.erb"))
       template("ui/views/table_filter.rb", File.join("#{module_path}/ui/#{class_name.pluralize.downcase}/_table_filter.html.erb"))
+    end
+
+    def add_importmap_configuration
+      append_to_file("app/assets/config/manifest.js") do
+        "//= link_tree ../../../#{module_name}/lib/#{module_name}/ui/javascript/controllers .js"
+      end
+
+      append_to_file("app/javascript/controllers/index.js") do
+        "eagerLoadControllersFrom('#{module_name}', application)"
+      end
     end
 
     def create_tests
