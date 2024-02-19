@@ -1,0 +1,10 @@
+<%%= form_tag(url, method: method, id: 'form', "data-controller": 'form') do %>
+  <% form_attributes.each do |attribute| %><div class="field label round border <%%= invalid?(@form, :<%= attribute[:field_name] %>) %>">
+    <%%= <%= attribute[:type] %> '<%= class_name.downcase %>[<%= attribute[:field_name] %>]', @form.params.dig(:<%= attribute[:field_name] %>) %>
+    <%%= label_tag '<%= class_name.downcase %>[<%= attribute[:field_name] %>]', '<%= attribute[:label].humanize %>' %>
+    <span class="error"><%%= show_error(@form, :<%= attribute[:field_name] %>) %></span>
+  </div>
+  <% end %>
+  <%%= button_tag button_text %>
+  <%%= link_to 'Back', <%= class_name.pluralize.downcase %>_path(page: params[:page], q: params[:q].as_json), class: 'button border' %>
+<%% end %>

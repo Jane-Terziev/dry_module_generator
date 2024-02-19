@@ -1,0 +1,10 @@
+module <%= module_name.capitalize %>
+  module App
+    module ReadService
+      class Get<%= class_name %>DetailsDto < ApplicationReadStruct
+        attribute :id, Types::String
+        <%= dto_definition.join("\n      ") %>
+      end
+    end
+  end
+end

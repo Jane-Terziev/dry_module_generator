@@ -4,9 +4,10 @@ require_relative "dry_module_generator/version"
 require "rails/generators"
 require_relative "dry_module_generator/install/installer"
 require_relative "dry_module_generator/module/generator"
-require_relative "dry_module_generator/uninstall/uninstaller"
+require_relative "dry_module_generator/config/configuration"
+require_relative "dry_module_generator/config/generator_configuration"
 
 module DryModuleGenerator
   class Error < StandardError; end
-  # Your code goes here...
+  class ConfigurationError < StandardError; end
 end

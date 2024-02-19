@@ -1,0 +1,16 @@
+module <%= module_name.capitalize %>
+  module Domain
+    class <%= class_name %>
+      class CreatedEvent < IntegrationEvent
+        def id
+          data[:id]
+        end
+        <% options[:attributes].each do |field_name, _| %>
+        def <%= field_name %>
+          data[:<%= field_name %>]
+        end
+        <% end %>
+      end
+    end
+  end
+end

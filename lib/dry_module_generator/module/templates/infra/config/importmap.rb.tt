@@ -1,0 +1,5 @@
+controllers_path = Rails.root.join("<%= module_path %>/ui/javascript/controllers")
+controllers_path.glob("**/*_controller.js").each do |controller|
+  name = controller.relative_path_from(controllers_path).to_s.remove(/\.js$/)
+  pin "<%= module_name %>/#{name}", to: name
+end

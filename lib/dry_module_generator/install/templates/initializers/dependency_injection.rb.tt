@@ -1,3 +1,0 @@
-require 'utils/injection/controller_resolve_strategy'
-
-Dry::AutoInject::Strategies.register('inject', Dry::AutoInject::Strategies::ControllerResolveStrategy)

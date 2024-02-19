@@ -3,71 +3,12 @@
 module DryModuleGenerator
   class Installer < Rails::Generators::Base
     source_root File.expand_path("templates", __dir__)
-    namespace "dry_module:setup"
+    namespace "dry_module:install"
 
-    def update_application_record
-      file_path = "app/models/application_record.rb"
-      class_name = "ApplicationRecord"
-
-      # Read the existing content of the file
-      file_content = File.read(file_path)
-
-      # Define the code you want to add
-      additional_code = "
-
-  def self.save(record)
-    record.tap(&:save)
-  end
-
-  def self.save!(record)
-    record.tap(&:save!)
-  end
-
-  def self.delete!(record)
-    record.tap(&:destroy!)
-  end"
-
-      # Check if the class is present in the file
-      if file_content.include?("class #{class_name}") && !file_content.include?("def self.save!")
-        # If the class is present, find the end of the class definition and add the code there
-        class_definition_end = file_content.index("end", file_content.index("class #{class_name}"))
-        if class_definition_end
-          inject_code_position = class_definition_end - 1
-          file_content.insert(inject_code_position, additional_code)
-          File.write(file_path, file_content)
-        else
-          puts "Error: Unable to find the end of the class definition in #{file_path}."
-        end
-      else
-        puts "Error: Unable to find the class definition for #{class_name} in #{file_path}."
-      end
-    end
-
-    def create_utils
-      template("utils/contract_validator.rb", File.join("lib/utils/contract_validator.rb"))
-      template("utils/types.rb", File.join("lib/utils/types.rb"))
-      template("utils/application_contract.rb", File.join("lib/utils/application_contract.rb"))
-      template("utils/application_struct.rb", File.join("lib/utils/application_struct.rb"))
-      template("utils/application_read_struct.rb", File.join("lib/utils/application_read_struct.rb"))
-      template(
-        "utils/injection/controller_resolve_strategy.rb",
-        File.join("lib/utils/injection/controller_resolve_strategy.rb")
-      )
-    end
-
-    def create_application_service
-      template("services/application_service.rb", File.join("app/services/application_service.rb"))
-    end
-
-    def create_constraint_error
-      template("errors/constraint_error.rb", File.join("app/errors/constraint_error.rb"))
-    end
-
-    def create_initializers
-      template("initializers/container.rb", File.join("config/initializers/container.rb"))
-      template("initializers/dependency_injection.rb", File.join("config/initializers/dependency_injection.rb"))
-      template("initializers/dry_struct_generator.rb", File.join("config/initializers/dry_struct_generator.rb"))
-      template("initializers/routes.rb", File.join("config/initializers/routes.rb"))
+    def create_utility_files
+      full_file_paths = Dir.glob(File.join(self.class.source_root, '**', '**')).filter {|it| it.include?('.rb.tt') }
+      file_names = full_file_paths.map {|it| it.split('templates/').last.chop.chop.chop }
+      file_names.each {|name| template(name, File.join(name)) }
     end
 
     def update_application
@@ -87,18 +28,7 @@ end
       return if file_content.include?("ConstraintError")
 
       inject_into_class file_path, "ApplicationController" do
-        "  include Import.inject[validator: 'contract_validator']
-
-  rescue_from(ConstraintError) do |e|
-    @form = e.validator
-    if action_name == 'create'
-      render :new, status: :unprocessable_entity
-    elsif action_name == 'update'
-      render :edit, status: :unprocessable_entity
-    end
-  end
-
-"
+        "  include Import.inject[validator: 'contract_validator']"
       end
     end
 
@@ -106,10 +36,9 @@ end
       file_path = "app/helpers/application_helper.rb"
       file_content = File.read(file_path)
 
-      return if file_content.include?("def show_error")
-
-      inject_into_module file_path, "ApplicationHelper" do
-        <<-"CODE"
+      unless file_content.include?("def show_error")
+        inject_into_module file_path, "ApplicationHelper" do
+          <<-"CODE"
   def show_error(validator, keys)
     return unless validator.errors
     keys = [keys] unless keys.is_a?(Array)
@@ -134,12 +63,75 @@ end
     end
     result
   end
-        CODE
+
+  def invalid?(validator, keys)
+    if show_error(validator, keys)
+      'invalid'
+    else
+      ''
+    end
+  end
+          CODE
+        end
+      end
+
+      unless file_content.include?("include Pagy::Frontend")
+        inject_into_module file_path, "ApplicationHelper" do
+          "  include Pagy::Frontend
+
+"
+        end
       end
     end
 
-    def create_javascripts
-      template("javascript/controllers/form_controller.js", File.join("app/javascript/controllers/form_controller.js"))
+    def update_gemfile
+      file_path = "Gemfile"
+      file_content = File.read(file_path)
+
+      append_to_file(file_path) do
+        "
+gem 'sass-rails'"
+      end unless file_content.include?('sass-rails')
+
+      append_to_file(file_path) do
+        "
+gem 'dry-validation'"
+      end unless file_content.include?('dry-validation')
+
+      append_to_file(file_path) do
+        "
+gem 'dry-struct'"
+      end unless file_content.include?('dry-struct')
+
+      append_to_file(file_path) do
+        "
+gem 'dry-system', '~> 1'"
+      end unless file_content.include?('dry-system')
+
+      append_to_file(file_path) do
+        "
+gem 'dry_struct_generator'"
+      end unless file_content.include?('dry_struct_generator')
+
+      append_to_file(file_path) do
+        "
+gem 'dry_object_mapper'"
+      end unless file_content.include?('dry_object_mapper')
+
+      append_to_file(file_path) do
+        "
+gem 'pagy'"
+      end unless file_content.include?('pagy')
+
+      append_to_file(file_path) do
+        "
+gem 'ransack'"
+      end unless file_content.include?('ransack')
+
+      append_to_file(file_path) do
+        "
+gem 'rails_event_store'"
+      end unless file_content.include?('rails_event_store')
     end
   end
 end

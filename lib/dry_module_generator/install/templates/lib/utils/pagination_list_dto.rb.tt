@@ -1,0 +1,6 @@
+require_relative 'application_read_struct'
+
+class PaginationListDto < ApplicationReadStruct
+  attribute :pagination, Types::Any
+  attribute :data, Types::Array
+end

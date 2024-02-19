@@ -1,0 +1,37 @@
+require 'rails_helper'
+
+RSpec.describe <%= module_name.capitalize %>::Domain::<%= class_name %>, type: :unit do
+  describe "#self.create_new(id: SecureRandom.uuid, , <%= options[:attributes].map { |field_name, _| "#{field_name}:" }.join(', ') %>)" do
+    context "when creating a new <%= class_name.downcase %>" do
+      it "should save without error" do
+        id = SecureRandom.uuid <% options[:attributes].each do |field_name, _| %>
+        <%= field_name %> = "<%= field_name %>"<% end %>
+
+        <%= class_name.downcase %> = described_class.create_new(
+          id: id, <% options[:attributes].each do |field_name, _| %>
+          <%= field_name %>: <%= field_name %>, <% end %>
+        )
+
+        expect { described_class.save!(<%= class_name.downcase %>) }.to_not raise_error
+      end
+    end
+  end
+
+  describe "#.update_<%= class_name.downcase %>(<%= options[:attributes].map { |field_name, _| "#{field_name}:" }.join(', ') %>)" do
+    context "when updating an <%= class_name.downcase %>" do
+      it "should update the attributes" do
+        <%= class_name.downcase %> = described_class.create_new(<% options[:attributes].each do |field_name, _| %>
+          <%= field_name %>: "old_<%= field_name %>", <% end %>
+        )
+        <% options[:attributes].each do |field_name, _| %>
+        <%= field_name %> = "new_<%= field_name %>"<% end %>
+
+        <%= class_name.downcase %>.update_<%= class_name.downcase %>(<% options[:attributes].each do |field_name, _| %>
+          <%= field_name %>: <%= field_name %>, <% end %>
+        )
+        <% options[:attributes].each do |field_name, _| %>
+        expect(<%= class_name.downcase %>.<%= field_name %>).to eq(<%= field_name %>)<% end %>
+      end
+    end
+  end
+end

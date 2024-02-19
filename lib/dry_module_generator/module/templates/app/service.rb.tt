@@ -1,21 +1,29 @@
-<% module_namespacing do -%>
 module <%= module_name.capitalize %>
   module App
     class <%= class_name %>Service < ApplicationService
       include Import[<%= class_name.downcase %>_repository: "<%= module_name %>.<%= class_name.downcase %>_repository"]
 
       def create_<%= class_name.downcase %>(command)
-        result = ActiveRecord::Base.transaction do
-          <%= class_name.downcase %>_repository.create!(command.to_h)
+        <%= class_name.downcase %> = ActiveRecord::Base.transaction do
+          <%= class_name.downcase %> = <%= class_name.downcase %>_repository.create_new(<% options[:attributes].each do |field_name, _| %>
+            <%= field_name %>: command.<%= field_name %>,<% end %>
+          )
+          <%= class_name.downcase %>_repository.save!(<%= class_name.downcase %>)
         end
+
+        event_publisher.publish_all(<%= class_name.downcase %>.domain_events)
       end
 
       def update_<%= class_name.downcase %>(command)
-        result = ActiveRecord::Base.transaction do
+        <%= class_name.downcase %> = ActiveRecord::Base.transaction do
           <%= class_name.downcase %> = <%= class_name.downcase %>_repository.find(command.id)
-          <%= class_name.downcase %>.update!(command.to_h)
-          <%= class_name.downcase %>
+          <%= class_name.downcase %>.update_<%= class_name.downcase %>(<% options[:attributes].each do |field_name, _| %>
+            <%= field_name %>: command.<%= field_name %>,<% end %>
+          )
+          <%= class_name.downcase %>_repository.save!(<%= class_name.downcase %>)
         end
+
+        event_publisher.publish_all(<%= class_name.downcase %>.domain_events)
       end
 
       def delete_<%= class_name.downcase %>(id)
@@ -23,15 +31,6 @@ module <%= module_name.capitalize %>
           <%= class_name.downcase %>_repository.delete!(<%= class_name.downcase %>_repository.find(id))
         end
       end
-
-      def get_all_<%= class_name.pluralize.downcase %>
-        map_into(<%= class_name.downcase %>_repository.all, Get<%= class_name.pluralize %>ListDto)
-      end
-
-      def get_<%= class_name.downcase %>(id)
-        map_into(<%= class_name.downcase %>_repository.find(id), Get<%= class_name %>DetailsDto)
-      end
     end
   end
 end
-<% end -%>

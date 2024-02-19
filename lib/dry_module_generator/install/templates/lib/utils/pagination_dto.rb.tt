@@ -1,0 +1,9 @@
+require_relative 'application_read_struct'
+
+class PaginationDto < ApplicationReadStruct
+  attribute :count, Types::Integer
+  attribute :last, Types::Integer
+  attribute :next, Types::Integer
+  attribute :page, Types::Integer
+  attribute :pages, Types::Integer
+end

@@ -1,0 +1,47 @@
+require 'rails_helper'
+
+RSpec.describe <%= module_name.capitalize %>::App::ReadService::<%= class_name %>Service, type: :unit do
+  subject(:<%= class_name.downcase %>_service) { described_class.new }
+
+  describe "#.get_all_<%= class_name.pluralize.downcase %>(query)" do
+    let(:query) { ListQuery.new(page: 1, page_size: 10, q: {}) }
+
+    context "when <%= class_name.downcase %> exists" do
+      let!(:<%= class_name.downcase %>) do
+        <%= module_name.capitalize %>::Domain::<%= class_name %>.create_new(<% options[:attributes].each do |field_name, _| %>
+          <%= field_name %>: "<%= field_name %>", <% end %>
+        ).tap(&:save!)
+      end
+
+      it "should return a PaginatedListDto as a result" do
+        result = <%= class_name.downcase %>_service.get_all_<%= class_name.pluralize.downcase %>(query)
+        expect(result.class).to eq(PaginationListDto)
+        expect(result.data.size).to eq(1)<% options[:attributes].each do |field_name, _| %>
+        expect(result.data[0].<%= field_name %>).to eq(<%= class_name.downcase %>.<%= field_name %>) <% end %>
+      end
+    end
+  end
+
+  describe "#.get_<%= class_name.downcase %>(id)" do
+    context "when the <%= class_name.downcase %> is not found" do
+      it "should raise an 404 not found error" do
+        expect { <%= class_name.downcase %>_service.get_<%= class_name.downcase %>(SecureRandom.uuid) }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+
+    context "when the <%= class_name.downcase %> is found" do
+      let!(:<%= class_name.downcase %>) do
+        <%= module_name.capitalize %>::Domain::<%= class_name %>.create_new(<% options[:attributes].each do |field_name, _| %>
+          <%= field_name %>: "<%= field_name %>", <% end %>
+        ).tap(&:save!)
+      end
+
+      it "should return a <%= class_name.downcase %> dto" do
+        result = <%= class_name.downcase %>_service.get_<%= class_name.downcase %>(<%= class_name.downcase %>.id)
+        expect(result.class).to eq(<%= module_name.capitalize %>::App::ReadService::Get<%= class_name %>DetailsDto)
+        expect(result.id).to eq(<%= class_name.downcase %>.id)<% options[:attributes].each do |field_name, _| %>
+        expect(result.<%= field_name %>).to eq(<%= class_name.downcase %>.<%= field_name %>)<% end %>
+      end
+    end
+  end
+end

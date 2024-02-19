@@ -1,9 +1,28 @@
-<% module_namespacing do -%>
 module <%= module_name.capitalize %>
   module Domain
-    class <%= class_name %> < ApplicationRecord
+    class <%= class_name %> < AggregateRoot
       self.table_name = "<%= class_name.pluralize.downcase %>"
+
+      def self.create_new(id: SecureRandom.uuid, <%= options[:attributes].map { |field_name, _| "#{field_name}:" }.join(', ') %>)
+        <%= class_name.downcase %> = new(
+          id: id,
+          <%= options[:attributes].map do |field_name, _|
+          "#{field_name}: #{field_name},"
+          end.join("\n          ") %>
+        )
+
+        <%= class_name.downcase %>
+      end
+
+      def update_<%= class_name.downcase %>(<%= options[:attributes].map { |field_name, _| "#{field_name}:" }.join(', ') %>)
+        assign_attributes(
+          <%= options[:attributes].map do |field_name, _|
+          "#{field_name}: #{field_name},"
+          end.join("\n          ") %>
+        )
+
+        self
+      end
     end
   end
 end
-<% end %>

@@ -1,5 +1,0 @@
-class ApplicationService
-  def map_into(data, mapper, options = {})
-    DryObjectMapper::Mapper.call(data, mapper, options)
-  end
-end

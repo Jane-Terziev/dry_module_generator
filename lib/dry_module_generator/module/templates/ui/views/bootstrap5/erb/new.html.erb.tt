@@ -1,0 +1,4 @@
+<div class="row mb-3 mt-3">
+  <span class="fs-5 fw-semibold">New <%= class_name %></span>
+</div>
+<%%= render 'form', url: <%= class_name.pluralize.downcase %>_path, method: :post, button_text: 'Save' %>

@@ -1,0 +1,16 @@
+<div class="row" id="<%%= @<%= class_name.downcase %>.id %>">
+  <h4 class="max"><%= class_name %> Details</h4>
+</div>
+
+<% options[:attributes].each do |field_name, _| %><div class="grid">
+  <div class="s4">
+    <h5 class="small"><%= field_name.capitalize.humanize %></h5>
+  </div>
+  <div class="s8">
+    <p><%%= @<%= class_name.downcase %>.<%= field_name %> || '/'  %></p>
+  </div>
+</div>
+
+<div class="large-divider"></div><% end %>
+
+<%%= link_to "Back to <%= class_name.pluralize.downcase %>", <%= class_name.pluralize.downcase %>_path(page: params[:page], q: params[:q].as_json), class: "button border large-margin", style: 'margin-left: 0 !important;' %>

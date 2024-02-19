@@ -1,0 +1,23 @@
+module <%= module_name.capitalize %>
+  module App
+    module ReadService
+      class <%= class_name %>Service < ApplicationService
+        include Import[<%= class_name.downcase %>_repository: "<%= module_name %>.<%= class_name.downcase %>_repository"]
+
+        def get_all_<%= class_name.pluralize.downcase %>(query)
+          paginate_collection(
+            collection: <%= class_name.downcase %>_repository.all,
+            mapper: Get<%= class_name.pluralize %>ListDto,
+            page: query.page,
+            page_size: query.page_size,
+            filter: query.q
+          )
+        end
+
+        def get_<%= class_name.downcase %>(id)
+          map_into(<%= class_name.downcase %>_repository.find(id), Get<%= class_name %>DetailsDto)
+        end
+      end
+    end
+  end
+end

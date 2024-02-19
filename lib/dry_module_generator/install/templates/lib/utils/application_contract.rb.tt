@@ -1,0 +1,19 @@
+class ApplicationContract < Dry::Validation::Contract
+  attr_accessor :params, :errors
+
+  def initialize(errors: {}, params: {})
+    super()
+    self.errors = errors
+    self.params = params
+  end
+
+  def self.command
+    DryStructGenerator::StructGenerator.new.call(self)
+  end
+
+  def to_h
+    self.class.schema.rules.keys.inject({}) do |hash, key|
+      hash.merge({ key => self.send(key) })
+    end
+  end
+end

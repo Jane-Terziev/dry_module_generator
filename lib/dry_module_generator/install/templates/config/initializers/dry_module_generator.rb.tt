@@ -1,0 +1,5 @@
+DryModuleGenerator::Config::GeneratorConfiguration.configure do |config|
+  config.include_views = true
+  config.css_framework = "bootstrap5"
+  config.html_style = "erb"
+end

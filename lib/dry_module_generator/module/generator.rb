@@ -30,19 +30,41 @@ module DryModuleGenerator
       'boolean': "check_box_tag"
     }.freeze
 
+    attr_accessor :config
+
     def initialize(args, *options)
       super
       self.module_name = args[0]
+      self.config = Config::GeneratorConfiguration
     end
 
     def create_app
       template("app/service.rb", File.join("#{module_path}/app/#{class_name.downcase}_service.rb"))
-      template("app/list_dto.rb", File.join("#{module_path}/app/get_#{class_name.pluralize.downcase}_list_dto.rb"))
-      template("app/details_dto.rb", File.join("#{module_path}/app/get_#{class_name.downcase}_details_dto.rb"))
+      template("app/read_service/service.rb", File.join("#{module_path}/app/read_service/#{class_name.downcase}_service.rb"))
+      template(
+        "app/read_service/get_list_dto.rb",
+        File.join("#{module_path}/app/read_service/get_#{class_name.pluralize.downcase}_list_dto.rb")
+      )
+      template(
+        "app/read_service/get_details_dto.rb",
+        File.join("#{module_path}/app/read_service/get_#{class_name.downcase}_details_dto.rb")
+      )
     end
 
     def create_domain
       template("domain/model.rb", File.join("#{module_path}/domain/#{class_name.downcase}.rb"))
+      template(
+        "domain/events/created_event.rb",
+        File.join("#{module_path}/domain/#{class_name.downcase}/created_event.rb")
+      )
+      template(
+        "domain/events/updated_event.rb",
+        File.join("#{module_path}/domain/#{class_name.downcase}/updated_event.rb")
+      )
+      template(
+        "domain/events/deleted_event.rb",
+        File.join("#{module_path}/domain/#{class_name.downcase}/deleted_event.rb")
+      )
     end
 
     def create_infra
@@ -56,42 +78,63 @@ module DryModuleGenerator
       )
       template("infra/config/application.rb", File.join("#{module_path}/infra/config/application.rb"))
       template("infra/config/routes.rb", File.join("#{module_path}/infra/config/routes.rb"))
+      template("infra/config/importmap.rb", File.join("#{module_path}/infra/config/importmap.rb"))
     end
 
     def create_ui
-      @action_type = "Create"
-      template("ui/validation.rb", File.join("#{module_path}/ui/create_#{class_name.downcase}_validator.rb"))
-      @action_type = "Update"
-      template("ui/validation.rb", File.join("#{module_path}/ui/update_#{class_name.downcase}_validator.rb"))
+      template("ui/create_validation.rb", File.join("#{module_path}/ui/create_#{class_name.downcase}_validator.rb"))
+      template("ui/update_validation.rb", File.join("#{module_path}/ui/update_#{class_name.downcase}_validator.rb"))
       template("ui/controller.rb", File.join("#{module_path}/ui/#{class_name.pluralize.downcase}_controller.rb"))
+      empty_directory("#{module_path}/ui/javascript/controllers") if Config::GeneratorConfiguration.include_views
     end
 
     def create_views
-      template("ui/views/form.rb", File.join("#{module_path}/ui/#{class_name.pluralize.downcase}/_form.html.erb"))
-      template("ui/views/index.rb", File.join("#{module_path}/ui/#{class_name.pluralize.downcase}/index.html.erb"))
-      template("ui/views/show.rb", File.join("#{module_path}/ui/#{class_name.pluralize.downcase}/show.html.erb"))
-      template("ui/views/new.rb", File.join("#{module_path}/ui/#{class_name.pluralize.downcase}/new.html.erb"))
-      template("ui/views/edit.rb", File.join("#{module_path}/ui/#{class_name.pluralize.downcase}/edit.html.erb"))
+      return unless Config::GeneratorConfiguration.include_views
+      template_path = "ui/views/#{config.css_framework}/#{config.html_style}"
+      template("#{template_path}/_form.html.erb", File.join("#{module_path}/ui/#{class_name.pluralize.downcase}/_form.html.erb"))
+      template("#{template_path}/_table_filter.html.erb", File.join("#{module_path}/ui/#{class_name.pluralize.downcase}/_table_filter.html.erb"))
+      template("#{template_path}/index.html.erb", File.join("#{module_path}/ui/#{class_name.pluralize.downcase}/index.html.erb"))
+      template("#{template_path}/show.html.erb", File.join("#{module_path}/ui/#{class_name.pluralize.downcase}/show.html.erb"))
+      template("#{template_path}/new.html.erb", File.join("#{module_path}/ui/#{class_name.pluralize.downcase}/new.html.erb"))
+      template("#{template_path}/edit.html.erb", File.join("#{module_path}/ui/#{class_name.pluralize.downcase}/edit.html.erb"))
+    end
+
+    def add_importmap_configuration
+      append_to_file("app/assets/config/manifest.js") do
+        "//= link_tree ../../../#{module_name}/lib/#{module_name}/ui/javascript/controllers .js"
+      end
+
+      append_to_file("app/javascript/controllers/index.js") do
+        "eagerLoadControllersFrom('#{module_name}', application)"
+      end
     end
 
     def create_tests
+      template(
+        "spec/app/service_spec.rb",
+        File.join("#{module_name}/spec/app/#{class_name.downcase}_service_spec.rb")
+      )
+      template(
+        "spec/app/read_service/service_spec.rb",
+        File.join("#{module_name}/spec/app/read_service/#{class_name.downcase}_service_spec.rb")
+      )
+      template(
+        "spec/domain/model_spec.rb",
+        File.join("#{module_name}/spec/domain/#{class_name.downcase}_spec.rb")
+      )
+      template(
+        "spec/ui/controller_spec.rb",
+        File.join("#{module_name}/spec/ui/#{class_name.pluralize.downcase}_controller_spec.rb")
+      )
       @action_type = "Create"
       template(
-        "spec/ui/validation_test.rb",
+        "spec/ui/validation_spec.rb",
         File.join("#{module_name}/spec/ui/create_#{class_name.downcase}_validator_spec.rb")
       )
       @action_type = "Update"
       template(
-        "spec/ui/validation_test.rb",
+        "spec/ui/validation_spec.rb",
         File.join("#{module_name}/spec/ui/update_#{class_name.downcase}_validator_spec.rb")
-      )
-      template(
-        "spec/app/service_test.rb",
-        File.join("#{module_name}/spec/app/#{class_name.downcase}_service_spec.rb")
-      )
-      template(
-        "spec/ui/controller_test.rb",
-        File.join("#{module_name}/spec/ui/#{class_name.pluralize.downcase}_controller_spec.rb")
       )
     end
 

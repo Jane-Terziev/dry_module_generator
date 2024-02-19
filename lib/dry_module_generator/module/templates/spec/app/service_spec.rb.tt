@@ -1,0 +1,105 @@
+require 'rails_helper'
+
+RSpec.describe <%= module_name.capitalize %>::App::<%= class_name %>Service, type: :unit do
+  subject(:<%= class_name.downcase %>_service) do
+    described_class.new(
+      <%= class_name.downcase %>_repository: <%= class_name.downcase %>_repository,
+      event_publisher: event_publisher
+    )
+  end
+
+  let(:<%= class_name.downcase %>_repository) { spy(<%= module_name.capitalize %>::Domain::<%= class_name %>) }
+  let(:event_publisher) { spy(MetadataEventPublisher) }
+
+  describe "#.create_<%= class_name.downcase %>(command)" do
+    let(:command) do
+      <%= module_name.capitalize %>::Ui::Create<%= class_name %>Validator.command.new(<% contract_test_params.each do |param| %>
+        <%= param[:field_name] %>: <%= param[:value] %>,<% end %>
+      )
+    end
+
+    context "when creating a new <%= class_name.downcase %>" do
+      let(:<%= class_name.downcase %>) { instance_double(<%= module_name.capitalize %>::Domain::<%= class_name %>, domain_events: []) }
+
+      before do
+        allow(<%= class_name.downcase %>_repository).to receive(:create_new) { <%= class_name.downcase %> }
+        allow(<%= class_name.downcase %>_repository).to receive(:save!) { <%= class_name.downcase %> }
+        allow(event_publisher).to receive(:publish_all)
+      end
+
+      it 'should call all the required model methods' do
+        expect { <%= class_name.downcase %>_service.create_<%= class_name.downcase %>(command) }.to_not raise_error
+        expect(<%= class_name.downcase %>_repository).to have_received(:create_new).with(<% options[:attributes].each do |field_name, _| %>
+          <%= field_name %>: command.<%= field_name %>, <% end %>
+        )
+        expect(<%= class_name.downcase %>_repository).to have_received(:save!).with(<%= class_name.downcase %>)
+        expect(event_publisher).to have_received(:publish_all).with(<%= class_name.downcase %>.domain_events)
+      end
+    end
+  end
+
+  describe "#.update_<%= class_name.downcase %>(command)" do
+    let(:command) do
+      <%= module_name.capitalize %>::Ui::Update<%= class_name %>Validator.command.new(<% contract_test_params.each do |param| %>
+        <%= param[:field_name] %>: <%= param[:value] %>,<% end %>
+        id: SecureRandom.uuid
+      )
+    end
+
+    context "when the <%= class_name.downcase %> with the id is not found" do
+      before do
+        allow(<%= class_name.downcase %>_repository).to receive(:find) { raise ActiveRecord::RecordNotFound }
+      end
+
+      it 'should raise a ActiveRecord::RecordNotFound error' do
+        expect { <%= class_name.downcase %>_service.update_<%= class_name.downcase %>(command) }.to raise_error { ActiveRecord::RecordNotFound }
+      end
+    end
+
+    context "when the <%= class_name.downcase %> with the id is found" do
+      let(:<%= class_name.downcase %>) { instance_double(<%= module_name.capitalize %>::Domain::<%= class_name %>) }
+
+      before do
+        allow(<%= class_name.downcase %>_repository).to receive(:find) { <%= class_name.downcase %> }
+        allow(<%= class_name.downcase %>).to receive(:update_<%= class_name.downcase %>)
+      end
+
+      it 'should update the record' do
+        expect { <%= class_name.downcase %>_service.update_<%= class_name.downcase %>(command) }.to_not raise_error
+        expect(<%= class_name.downcase %>_repository).to have_received(:find).with(command.id)
+        expect(<%= class_name.downcase %>).to have_received(:update_<%= class_name.downcase %>).with(<% options[:attributes].each do |field_name, _| %>
+          <%= field_name %>: command.<%= field_name %>, <% end %>
+        )
+      end
+    end
+  end
+
+  describe "#.delete_<%= class_name.downcase %>(id)" do
+    let(:id) { SecureRandom.uuid }
+
+    context "when the <%= class_name.downcase %> with the id is not found" do
+      before do
+        allow(<%= class_name.downcase %>_repository).to receive(:find) { raise ActiveRecord::RecordNotFound }
+      end
+
+      it 'should raise a ActiveRecord::RecordNotFound error' do
+        expect { <%= class_name.downcase %>_service.delete_<%= class_name.downcase %>(id) }.to raise_error { ActiveRecord::RecordNotFound }
+        expect(<%= class_name.downcase %>_repository).to have_received(:find).with(id)
+      end
+    end
+
+    context "when the <%= class_name.downcase %> with the id is found" do
+      let(:<%= class_name.downcase %>) { instance_double(<%= module_name.capitalize %>::Domain::<%= class_name %>) }
+
+      before do
+        allow(<%= class_name.downcase %>_repository).to receive(:find) { <%= class_name.downcase %> }
+      end
+
+      it 'should find the <%= class_name.downcase %> and delete it' do
+        expect { <%= class_name.downcase %>_service.delete_<%= class_name.downcase %>(id) }.to_not raise_error
+        expect(<%= class_name.downcase %>_repository).to have_received(:find).with(id)
+        expect(<%= class_name.downcase %>_repository).to have_received(:delete!).with(<%= class_name.downcase %>)
+      end
+    end
+  end
+end
