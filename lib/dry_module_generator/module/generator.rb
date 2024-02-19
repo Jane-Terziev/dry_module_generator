@@ -100,6 +100,7 @@ module DryModuleGenerator
     end
 
     def add_importmap_configuration
+      return unless Config::GeneratorConfiguration.include_views
       append_to_file("app/assets/config/manifest.js") do
         "//= link_tree ../../../#{module_name}/lib/#{module_name}/ui/javascript/controllers .js"
       end
