@@ -21,6 +21,8 @@
             q: params[:q] || {}
           )
         )
+
+        render json: @paginated_result if request.format.json?
       end
 
       def new
@@ -28,21 +30,24 @@
       end
 
       def create
-        <%= service_name %>.create_<%= singularize_variable_name %>(
+        id = <%= service_name %>.create_<%= singularize_variable_name %>(
           validator.validate(
             <%= singularize_variable_name %>_params,
             Create<%= class_name.singularize %>Validator.new,
             { id: SecureRandom.uuid }
           )
         )
+        render json: { id: id }, status: 201 and return if request.format.json?
         redirect_to <%= view_path_name %>_path, notice: "<%= class_name %> was successfully created!"
       rescue ConstraintError => e
         @form = e.validator
+        render json: @form.errors, status: :unprocessable_entity and return if request.format.json?
         render :new, status: :unprocessable_entity
       end
 
       def show
         @<%= singularize_variable_name %> = <%= read_service_name %>.get_<%= singularize_variable_name %>(params[:id])
+        render json: @<%= singularize_variable_name %> if request.format.json?
       end
 
       def edit
@@ -52,15 +57,21 @@
 
       def update
         <%= service_name %>.update_<%= singularize_variable_name %>(validator.validate(<%= singularize_variable_name %>_params, Update<%= class_name.singularize %>Validator.new, { id: params[:id] }))
+        render json: {} and return if request.format.json?
         redirect_to <%= view_path_name %>_path(page: params[:page], q: params[:q].as_json), notice: "<%= class_name %> was successfully updated!"
       rescue ConstraintError => e
         @form = e.validator
+        render json: @form.errors, status: :unprocessable_entity and return if request.format.json?
         render :edit, status: :unprocessable_entity
       end
 
       def destroy
         <%= service_name %>.delete_<%= singularize_variable_name %>(params[:id])
-        redirect_to <%= view_path_name %>_path(page: params[:page], q: params[:q].as_json), notice: "<%= class_name %> was successfully deleted!"
+        respond_to do |format|
+          format.json { render json: {} }
+          format.html { redirect_to <%= view_path_name %>_path(page: params[:page], q: params[:q].as_json), notice: "<%= class_name %> was successfully deleted!" }
+          format.turbo_stream { render turbo_stream: turbo_stream.remove(params[:id]) }
+        end
       end
 
       private

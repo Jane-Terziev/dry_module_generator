@@ -12,6 +12,7 @@ module <%= module_name.capitalize %>
         end
 
         event_publisher.publish_all(<%= class_name.downcase %>.domain_events)
+        <%= class_name.downcase %>.id
       end
 
       def update_<%= class_name.downcase %>(command)

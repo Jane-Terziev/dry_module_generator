@@ -8,6 +8,7 @@ module DryModuleGenerator
     argument :module_name, type: :string, required: false
     class_option :class_name, type: :string, default: nil
     class_option :attributes, type: :hash, default: {}
+    class_option :response_format, type: :string, default: "html"
 
     TYPE_TO_DRY_TYPE = {
       'array': "Types::Array",
@@ -40,7 +41,8 @@ module DryModuleGenerator
 
     def create_app
       template("app/service.rb", File.join("#{module_path}/app/#{class_name.downcase}_service.rb"))
-      template("app/read_service/service.rb", File.join("#{module_path}/app/read_service/#{class_name.downcase}_service.rb"))
+      template("app/read_service/service.rb",
+               File.join("#{module_path}/app/read_service/#{class_name.downcase}_service.rb"))
       template(
         "app/read_service/get_list_dto.rb",
         File.join("#{module_path}/app/read_service/get_#{class_name.pluralize.downcase}_list_dto.rb")
@@ -90,17 +92,25 @@ module DryModuleGenerator
 
     def create_views
       return unless Config::GeneratorConfiguration.include_views
+
       template_path = "ui/views/#{config.css_framework}/#{config.html_style}"
-      template("#{template_path}/_form.html.erb", File.join("#{module_path}/ui/#{class_name.pluralize.downcase}/_form.html.erb"))
-      template("#{template_path}/_table_filter.html.erb", File.join("#{module_path}/ui/#{class_name.pluralize.downcase}/_table_filter.html.erb"))
-      template("#{template_path}/index.html.erb", File.join("#{module_path}/ui/#{class_name.pluralize.downcase}/index.html.erb"))
-      template("#{template_path}/show.html.erb", File.join("#{module_path}/ui/#{class_name.pluralize.downcase}/show.html.erb"))
-      template("#{template_path}/new.html.erb", File.join("#{module_path}/ui/#{class_name.pluralize.downcase}/new.html.erb"))
-      template("#{template_path}/edit.html.erb", File.join("#{module_path}/ui/#{class_name.pluralize.downcase}/edit.html.erb"))
+      template("#{template_path}/_form.html.erb",
+               File.join("#{module_path}/ui/#{class_name.pluralize.downcase}/_form.html.erb"))
+      template("#{template_path}/_table_filter.html.erb",
+               File.join("#{module_path}/ui/#{class_name.pluralize.downcase}/_table_filter.html.erb"))
+      template("#{template_path}/index.html.erb",
+               File.join("#{module_path}/ui/#{class_name.pluralize.downcase}/index.html.erb"))
+      template("#{template_path}/show.html.erb",
+               File.join("#{module_path}/ui/#{class_name.pluralize.downcase}/show.html.erb"))
+      template("#{template_path}/new.html.erb",
+               File.join("#{module_path}/ui/#{class_name.pluralize.downcase}/new.html.erb"))
+      template("#{template_path}/edit.html.erb",
+               File.join("#{module_path}/ui/#{class_name.pluralize.downcase}/edit.html.erb"))
     end
 
     def add_importmap_configuration
       return unless Config::GeneratorConfiguration.include_views
+
       append_to_file("app/assets/config/manifest.js") do
         "//= link_tree ../../../#{module_name}/lib/#{module_name}/ui/javascript/controllers .js"
       end
