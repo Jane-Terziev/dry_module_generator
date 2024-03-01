@@ -134,6 +134,26 @@ module DryModuleGenerator
         File.join("#{module_name}/spec/domain/#{class_name.downcase}_spec.rb")
       )
       template(
+        "spec/requests/create_request_spec.rb",
+        File.join("#{module_name}/spec/requests/create_#{class_name.downcase}_spec.rb")
+      )
+      template(
+        "spec/requests/update_request_spec.rb",
+        File.join("#{module_name}/spec/requests/update_#{class_name.downcase}_spec.rb")
+      )
+      template(
+        "spec/requests/list_request_spec.rb",
+        File.join("#{module_name}/spec/requests/list_#{class_name.downcase}_spec.rb")
+      )
+      template(
+        "spec/requests/details_request_spec.rb",
+        File.join("#{module_name}/spec/requests/#{class_name.downcase}_details_spec.rb")
+      )
+      template(
+        "spec/requests/delete_request_spec.rb",
+        File.join("#{module_name}/spec/requests/delete_#{class_name.downcase}_spec.rb")
+      )
+      template(
         "spec/ui/controller_spec.rb",
         File.join("#{module_name}/spec/ui/#{class_name.pluralize.downcase}_controller_spec.rb")
       )

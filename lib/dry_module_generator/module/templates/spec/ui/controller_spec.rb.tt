@@ -113,11 +113,7 @@ RSpec.describe <%= module_name.capitalize %>::Ui::<%= class_name.pluralize %>Con
     context 'when the validation is not valid' do
       subject do
         post :create,
-        params: {
-          <%= class_name.downcase %>: {<% contract_test_params.each do |param| %><% if param[:required] == false %>
-            <%= param[:field_name] %>: <%= param[:value] %>,<% end %><% end %>
-          }
-        }
+        params: { <%= class_name.downcase %>: { asd: "asd" } }
       end
       render_views
 
@@ -143,12 +139,7 @@ RSpec.describe <%= module_name.capitalize %>::Ui::<%= class_name.pluralize %>Con
     context 'when the validation is not valid' do
       subject do
         patch :update,
-        params: {
-          id: <%= class_name.pluralize.downcase %>[0].id,
-          <%= class_name.downcase %>: {<% contract_test_params.each do |param| %><% if param[:required] == false %>
-            <%= param[:field_name] %>: <%= param[:value] %>,<% end %><% end %>
-          }
-        }
+        params: { id: <%= class_name.pluralize.downcase %>[0].id, <%= class_name.downcase %>: { asd: 'asd' } }
       end
       render_views
 

@@ -1,0 +1,22 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+require_relative 'swagger_definitions'
+require_relative 'swagger_error_definitions'
+
+RSpec.configure do |config|
+  include SwaggerDefinitions
+  include SwaggerErrorDefinitions
+  config.openapi_root = Rails.root.join('swagger').to_s
+
+  config.openapi_specs = {
+    'v1/swagger.yaml' => {
+      swagger: '2.0',
+      info: { title: 'API V1', version: 'v1' },
+      paths: {},
+      definitions: swagger_definitions
+    }
+  }
+
+  config.openapi_format = :yaml
+end

@@ -1,0 +1,4 @@
+desc 'Generate swagger documentation from main spec folder and module folders'
+task swagger: :environment do
+  system("rake rswag:specs:swaggerize PATTERN='*/spec/requests/**/*_spec.rb, spec/requests/**/*_spec.rb, spec/integration/**/*_spec.rb, spec/api/**/*_spec.rb'")
+end

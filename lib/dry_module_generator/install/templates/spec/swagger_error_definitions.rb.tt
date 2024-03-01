@@ -1,0 +1,11 @@
+module SwaggerErrorDefinitions
+  def constraint_violation_error
+    {
+      type: :object, properties: {
+      message: { type: :object },
+      error:   { type: :string,  enum: %w[constraint_violation] },
+      code:    { type: :integer, enum: [422] }
+    }
+    }
+  end
+end

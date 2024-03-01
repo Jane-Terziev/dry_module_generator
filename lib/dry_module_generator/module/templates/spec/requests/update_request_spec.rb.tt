@@ -1,0 +1,55 @@
+require 'swagger_helper'
+
+describe '<%= class_name.capitalize.pluralize %> API' do
+  let!(:id) do
+    <%= module_name.capitalize %>::Domain::<%= class_name %>.create_new(<% contract_test_params.each do |param| %>
+      <%= param[:field_name] %>: <%= param[:value] %>,<% end %>
+    ).tap(&:save!).id
+  end
+
+  path '/<%= class_name.downcase.pluralize %>/{id}' do
+    put 'Updates a <%= class_name.downcase.singularize %>' do
+      tags '<%= class_name.capitalize.pluralize %>'
+
+      consumes 'application/json'
+      produces 'application/json'
+
+      parameter name: :id, in: :path, type: :string, description: 'The <%= class_name.downcase %> id'
+      parameter name: :<%= class_name.downcase.singularize %>, in: :body, schema: {
+        type: :object, properties: {
+          <%= class_name.downcase.singularize %>: Dry::Swagger::DocumentationGenerator.new.from_validation(
+            <%= class_name.capitalize.pluralize %>::Ui::Update<%= class_name.capitalize.singularize %>Validator
+          )
+        }
+      }
+
+      response '200', 'Successfully updated <%= class_name.downcase %>' do
+        let(:<%= class_name.downcase.singularize %>) do
+          {
+            <%= class_name.downcase.singularize %>: {<% contract_test_params.each do |param| %>
+              <%= param[:field_name] %>: "New <%= param[:value] %>",<% end %>
+            }
+          }
+        end
+
+        before do |example|
+          submit_request(example.metadata)
+        end
+
+        it "updates the <%= class_name.downcase.singularize %> attributes" do |example|
+          assert_response_matches_metadata(example.metadata)
+          updated_<%= class_name.downcase.singularize %> = <%= module_name.capitalize %>::Domain::<%= class_name %>.find(id)
+          <% contract_test_params.each do |param| %>
+          expect(updated_<%= class_name.downcase.singularize %>.<%= param[:field_name] %>).to eq(<%= class_name.downcase.singularize %>[:<%= class_name.downcase.singularize %>][:<%= param[:field_name] %>]) <% end %>
+        end
+      end
+
+      response '422', 'Constraint Error' do
+        schema '$ref' => '#/definitions/constraint_violation_error'
+        let(:<%= class_name.downcase.singularize %>) { { <%= class_name.downcase.singularize %>: { asd: 'asd' } } }
+
+        run_test!
+      end
+    end
+  end
+end

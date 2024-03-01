@@ -1,0 +1,21 @@
+require 'swagger_helper'
+
+describe '<%= class_name.capitalize.pluralize %> API' do
+   path '/<%= class_name.downcase.pluralize %>' do
+    get 'Get a list of <%= class_name.downcase.singularize %>' do
+      tags '<%= class_name.capitalize.pluralize %>'
+
+      consumes 'application/json'
+      produces 'application/json'
+
+      response '200', 'Successfully gets a list of <%= class_name.downcase.pluralize %>' do
+        schema type: :object, properties: {
+          pagination: Dry::Swagger::DocumentationGenerator.new.from_struct(PaginationDto),
+          data: { type: :array, items: Dry::Swagger::DocumentationGenerator.new.from_struct(<%= module_name.capitalize %>::App::ReadService::Get<%= class_name.pluralize %>ListDto) }
+        }
+
+        run_test!
+      end
+    end
+  end
+end

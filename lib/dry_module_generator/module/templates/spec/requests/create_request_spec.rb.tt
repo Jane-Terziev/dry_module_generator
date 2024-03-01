@@ -1,0 +1,39 @@
+require 'swagger_helper'
+
+describe '<%= class_name.capitalize.pluralize %> API' do
+  path '/<%= class_name.downcase.pluralize %>' do
+    post 'Creates a <%= class_name.downcase.singularize %>' do
+      tags '<%= class_name.capitalize.pluralize %>'
+
+      consumes 'application/json'
+      produces 'application/json'
+
+      parameter name: :<%= class_name.downcase.singularize %>, in: :body, schema: {
+        type: :object, properties: {
+          <%= class_name.downcase.singularize %>: Dry::Swagger::DocumentationGenerator.new.from_validation(
+            <%= class_name.capitalize.pluralize %>::Ui::Create<%= class_name.capitalize.singularize %>Validator
+          )
+        }
+      }
+
+      response '201', 'Successfully created' do
+        let(:<%= class_name.downcase.singularize %>) do
+          {
+            <%= class_name.downcase.singularize %>: {<% contract_test_params.each do |param| %>
+              <%= param[:field_name] %>: <%= param[:value] %>,<% end %>
+            }
+          }
+        end
+
+        run_test!
+      end
+
+      response '422', 'Constraint Error' do
+        schema '$ref' => '#/definitions/constraint_violation_error'
+        let(:<%= class_name.downcase.singularize %>) { { <%= class_name.downcase.singularize %>: { asd: 'asd' } } }
+
+        run_test!
+      end
+    end
+  end
+end

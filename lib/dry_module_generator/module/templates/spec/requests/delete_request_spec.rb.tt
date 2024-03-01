@@ -1,0 +1,25 @@
+require 'swagger_helper'
+
+describe '<%= class_name.capitalize.pluralize %> API' do
+  let!(:id) do
+    <%= module_name.capitalize %>::Domain::<%= class_name %>.create_new(<% contract_test_params.each do |param| %>
+      <%= param[:field_name] %>: <%= param[:value] %>,<% end %>
+    ).tap(&:save!).id
+  end
+
+   path '/<%= class_name.downcase.pluralize %>/{id}' do
+    delete 'Delete <%= class_name.downcase.singularize %>' do
+      tags '<%= class_name.capitalize.pluralize %>'
+
+      consumes 'application/json'
+      produces 'application/json'
+
+      parameter name: :id, in: :path, type: :string, description: 'The <%= class_name.downcase %> id'
+
+      response '200', 'Successfully deleted <%= class_name.downcase.pluralize %>' do
+
+        run_test!
+      end
+    end
+  end
+end

@@ -3,7 +3,6 @@ class Create<%= class_name.pluralize %> < ActiveRecord::Migration[<%= ActiveReco
     create_table :<%= class_name.pluralize.downcase %>, id: false do |t|
       t.string :id, limit: 36, primary_key: true
       <%= migration_definition.join("\n      ") %>
-      t.boolean
 
       t.timestamps
     end

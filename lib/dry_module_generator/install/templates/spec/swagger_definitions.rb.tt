@@ -1,0 +1,7 @@
+module SwaggerDefinitions
+  def swagger_definitions
+    {
+      constraint_violation_error: constraint_violation_error,
+    }
+  end
+end

@@ -6,7 +6,7 @@ module DryModuleGenerator
     namespace "dry_module:install"
 
     def create_utility_files
-      full_file_paths = Dir.glob(File.join(self.class.source_root, "**", "**")).filter { |it| it.include?(".rb.tt") }
+      full_file_paths = Dir.glob(File.join(self.class.source_root, "**", "**")).filter { |it| it.include?(".tt") }
       file_names = full_file_paths.map { |it| it.split("templates/").last.chop.chop.chop }
       file_names.each { |name| template(name, File.join(name)) }
     end
@@ -130,6 +130,13 @@ gem 'dry_object_mapper'"
         end
       end
 
+      unless file_content.include?("dry-swagger")
+        append_to_file(file_path) do
+          "
+gem 'dry-swagger'"
+        end
+      end
+
       unless file_content.include?("pagy")
         append_to_file(file_path) do
           "
@@ -144,11 +151,18 @@ gem 'ransack'"
         end
       end
 
-      return if file_content.include?("rails_event_store")
-
-      append_to_file(file_path) do
-        "
+      unless file_content.include?("rails_event_store")
+        append_to_file(file_path) do
+          "
 gem 'rails_event_store'"
+        end
+      end
+
+      unless file_content.include?("rswag")
+        append_to_file(file_path) do
+          "
+gem 'rswag'"
+        end
       end
     end
   end
